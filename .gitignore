@@ -1,0 +1,5 @@
+ra_notes.json
+__pycache__/
+*.pyc
+*.pyo
+.env
