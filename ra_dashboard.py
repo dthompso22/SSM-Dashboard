@@ -11,8 +11,9 @@ UPGRADE_VER      = "November 2025"
 UPGRADE_PRD_DATE = "2026-04-11"
 UPGRADE_PRD_DISP = "April 11, 2026"
 
-NOTES_FILE   = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_notes.json")
-RA_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_data.json")
+NOTES_FILE        = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_notes.json")
+RA_DATA_FILE      = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_data.json")
+CALENDAR_TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendar_template.html")
 
 def load_ra_data():
     with open(RA_DATA_FILE, "r", encoding="utf-8") as f:
@@ -111,6 +112,14 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   header h1 { font-size: 17px; font-weight: 600; letter-spacing: .2px; }
   header .subtitle { font-size: 11px; color: #8faecf; margin-top: 1px; }
   header .meta { font-size: 12px; color: #8faecf; text-align: right; }
+  .nav-link {
+    color: #8faecf; text-decoration: none;
+    font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border-radius: 5px;
+    transition: background .15s, color .15s;
+  }
+  .nav-link:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .nav-link.active { background: rgba(255,255,255,.15); color: #fff; }
 
   /* ── Layout ── */
   main { max-width: 1400px; margin: 0 auto; padding: 20px 20px 60px; display: flex; flex-direction: column; gap: 24px; }
@@ -322,6 +331,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       <h1>SSM Health RA Tracker</h1>
       <div class="subtitle">Technical Coordinator &mdash; Request Activity Dashboard</div>
     </div>
+  </div>
+  <div style="display:flex;gap:4px;">
+    <a class="nav-link active" href="/">RA Tracker</a>
+    <a class="nav-link" href="/calendar">Calendar</a>
   </div>
   <div class="meta">
     <div id="header-counts"></div>
@@ -725,6 +738,30 @@ def index():
             .replace("__UPGRADE_VER__", UPGRADE_VER)
             .replace("__UPGRADE_PRD_DATE__", UPGRADE_PRD_DATE)
             .replace("__UPGRADE_PRD_DISP__", UPGRADE_PRD_DISP)
+            .replace("__TODAY__", today_str))
+    return html, 200, {"Content-Type": "text/html; charset=utf-8"}
+
+@app.route("/calendar")
+def calendar():
+    today_str = date.today().isoformat()
+    annotated = []
+    for ra in load_ra_data():
+        r = dict(ra)
+        r["cat"] = get_category(r["type"])
+        if r["type"] == "Special Update":
+            r["prd_from_title"] = parse_prd_date(r["title"])
+        else:
+            r["prd_from_title"] = None
+        annotated.append(r)
+
+    import json as _json
+    ra_json = _json.dumps(annotated)
+
+    with open(CALENDAR_TEMPLATE, "r", encoding="utf-8") as f:
+        tmpl = f.read()
+
+    html = (tmpl
+            .replace("__RA_DATA__", ra_json)
             .replace("__TODAY__", today_str))
     return html, 200, {"Content-Type": "text/html; charset=utf-8"}
 

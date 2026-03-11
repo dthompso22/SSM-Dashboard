@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSM Health · Q2 2026 Upgrade Timeline</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    font-size: 14px;
+  }
+
+  header {
+    background: #1a2b4a;
+    color: #fff;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  header .brand { display: flex; align-items: center; gap: 12px; }
+  header .brand-icon {
+    width: 32px; height: 32px;
+    background: #e8501a; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; color: #fff; flex-shrink: 0;
+  }
+  header h1 { font-size: 17px; font-weight: 600; }
+  header .subtitle { font-size: 11px; color: #8faecf; margin-top: 1px; }
+  header .meta { font-size: 12px; color: #8faecf; text-align: right; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link {
+    color: #8faecf; text-decoration: none;
+    font-size: 12px; font-weight: 500;
+    padding: 5px 12px; border-radius: 5px;
+    transition: background .15s, color .15s;
+  }
+  .nav-link:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .nav-link.active { background: rgba(255,255,255,.15); color: #fff; }
+
+  main { padding: 20px 20px 60px; max-width: 1600px; margin: 0 auto; }
+
+  .page-header {
+    display: flex; align-items: baseline; gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #1a2b4a;
+    margin-bottom: 20px;
+  }
+  .page-header h2 { font-size: 16px; font-weight: 700; color: #1a2b4a; }
+  .page-header .draft-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: .5px;
+    background: #fef3c7; color: #92400e;
+    padding: 2px 7px; border-radius: 4px;
+    border: 1px solid #fcd34d;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 8px 18px;
+    margin-bottom: 16px; padding: 10px 14px;
+    background: #fff; border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #374151; }
+  .legend-swatch {
+    width: 20px; height: 10px; border-radius: 2px; flex-shrink: 0;
+  }
+  .legend-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .legend-line {
+    width: 20px; height: 2px; flex-shrink: 0;
+  }
+
+  /* ── Timeline card ── */
+  .timeline-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.07), 0 3px 12px rgba(0,0,0,.05);
+    overflow: hidden;
+  }
+
+  .timeline-scroll-outer {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+
+  .timeline-inner {
+    position: relative;
+    display: table;
+    min-width: 100%;
+  }
+
+  /* ── Month / week header ── */
+  .tl-header-row {
+    display: flex;
+    position: sticky;
+    top: 56px;
+    z-index: 100;
+    background: #1a2b4a;
+    color: #fff;
+  }
+  .tl-label-stub {
+    width: 152px;
+    min-width: 152px;
+    flex-shrink: 0;
+    position: sticky;
+    left: 0;
+    background: #1a2b4a;
+    z-index: 110;
+    border-right: 1px solid rgba(255,255,255,.15);
+  }
+  .tl-months-row {
+    flex: 1;
+    position: relative;
+    height: 22px;
+  }
+  .month-label {
+    position: absolute;
+    top: 0; height: 22px;
+    display: flex; align-items: center;
+    font-size: 10px; font-weight: 700; letter-spacing: .5px;
+    color: #cbd5e1;
+    padding-left: 6px;
+    border-left: 1px solid rgba(255,255,255,.1);
+  }
+  .tl-weeks-row {
+    flex: 1; position: relative; height: 22px;
+    background: #f7f8fb;
+    border-bottom: 1px solid #e2e6ee;
+  }
+  .week-label {
+    position: absolute;
+    top: 0; height: 22px;
+    font-size: 9px; color: #9ca3af;
+    padding-left: 4px;
+    display: flex; align-items: center;
+    border-left: 1px solid #e2e6ee;
+    white-space: nowrap;
+  }
+  .week-label-stub {
+    width: 152px; min-width: 152px; flex-shrink: 0;
+    position: sticky; left: 0;
+    background: #f7f8fb; z-index: 110;
+    border-right: 1px solid #e2e6ee;
+    height: 22px;
+    display: flex; align-items: center;
+    padding-left: 10px;
+    font-size: 9px; font-weight: 700; color: #6b7280; letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+
+  /* ── Track rows ── */
+  .tl-track-row {
+    display: flex;
+    min-height: 46px;
+    border-bottom: 1px solid #edf0f5;
+    position: relative;
+  }
+  .tl-track-row:last-child { border-bottom: none; }
+  .tl-track-row.track-sep {
+    border-top: 2px solid #e2e6ee;
+  }
+
+  .tl-track-label {
+    width: 152px;
+    min-width: 152px;
+    flex-shrink: 0;
+    position: sticky;
+    left: 0;
+    z-index: 50;
+    background: #fff;
+    border-right: 1px solid #e2e6ee;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+  }
+  .track-label-inner { display: flex; flex-direction: column; gap: 1px; }
+  .track-label-name {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .3px;
+    white-space: nowrap;
+  }
+  .track-label-sub { font-size: 9px; color: #9ca3af; white-space: nowrap; }
+
+  .tl-track-area {
+    flex: 1;
+    position: relative;
+    min-height: 46px;
+  }
+
+  /* ── Vertical grid lines (weeks) ── */
+  .vgrid-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: #f0f2f5;
+    pointer-events: none;
+  }
+
+  /* ── Today & upgrade markers ── */
+  .marker-today {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: rgba(220, 38, 38, .7);
+    pointer-events: none;
+    z-index: 30;
+  }
+  .marker-upgrade {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: rgba(234, 179, 8, .85);
+    pointer-events: none;
+    z-index: 30;
+  }
+
+  /* ── Event bars ── */
+  .ev-bar {
+    position: absolute;
+    height: 24px;
+    top: 11px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 0 7px;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: default;
+    transition: filter .15s, opacity .15s;
+    z-index: 10;
+    min-width: 4px;
+  }
+  .ev-bar:hover { filter: brightness(1.08); z-index: 20; }
+  .ev-bar.past { opacity: .45; }
+
+  /* ── Point events ── */
+  .ev-point-wrap {
+    position: absolute;
+    top: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 15;
+    cursor: default;
+  }
+  .ev-point-wrap:hover { z-index: 25; }
+  .ev-point-wrap:hover .ev-point-label { opacity: 1; max-width: 200px; }
+  .ev-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-top: 18px;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,.6);
+  }
+  .ev-point-label {
+    font-size: 8px;
+    font-weight: 700;
+    color: #374151;
+    white-space: nowrap;
+    max-width: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity .15s, max-width .15s;
+    margin-top: 2px;
+    background: rgba(255,255,255,.92);
+    padding: 1px 3px;
+    border-radius: 2px;
+    pointer-events: none;
+    transform: translateX(-50%);
+    text-align: center;
+  }
+  .ev-dot.past { opacity: .45; }
+
+  /* ── Key milestone (diamond) ── */
+  .ev-key {
+    position: absolute;
+    width: 14px; height: 14px;
+    top: 16px;
+    transform: translateX(-50%) rotate(45deg);
+    border: 2px solid rgba(255,255,255,.8);
+    z-index: 20;
+    cursor: default;
+  }
+  .ev-key-label {
+    position: absolute;
+    font-size: 9px; font-weight: 800;
+    letter-spacing: .4px;
+    white-space: nowrap;
+    top: 33px;
+    transform: translateX(-50%);
+    z-index: 20;
+  }
+
+  /* ── Tooltip ── */
+  .ev-bar[data-tip]:hover::after,
+  .ev-point-wrap[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a2b4a;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 9px;
+    border-radius: 5px;
+    white-space: pre-line;
+    max-width: 260px;
+    pointer-events: none;
+    z-index: 999;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    text-align: left;
+  }
+
+  /* ── Marker labels (floating at top of all-tracks column) ── */
+  .marker-label-today {
+    position: sticky; top: 100px;
+    font-size: 9px; font-weight: 700;
+    color: #dc2626;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .marker-label-upgrade {
+    position: sticky; top: 100px;
+    font-size: 9px; font-weight: 700;
+    color: #b45309;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  /* ── Track header rows (section separators) ── */
+  .tl-section-header {
+    display: flex;
+    background: #f7f8fb;
+    border-bottom: 1px solid #e2e6ee;
+    border-top: 2px solid #1a2b4a;
+    min-height: 22px;
+  }
+  .tl-section-header-label {
+    width: 152px; min-width: 152px; flex-shrink: 0;
+    position: sticky; left: 0; z-index: 50;
+    background: #f7f8fb;
+    border-right: 1px solid #e2e6ee;
+    display: flex; align-items: center;
+    padding: 0 10px;
+    font-size: 9px; font-weight: 800;
+    letter-spacing: .5px; text-transform: uppercase;
+    color: #1a2b4a;
+  }
+  .tl-section-header-area {
+    flex: 1; position: relative;
+  }
+
+  /* ── Colors ── */
+  .clr-app      { background: #bfdbfe; color: #1e3a8a; }
+  .clr-app-dr   { background: #93c5fd; color: #1e3a8a; }
+  .clr-app-key  { background: #1d4ed8; color: #fff; }
+  .clr-tech     { background: #fde68a; color: #78350f; }
+  .clr-tech-env { background: #fcd34d; color: #78350f; }
+  .clr-tech-fix { background: #f59e0b; color: #fff; }
+  .clr-current  { background: #a7f3d0; color: #064e3b; }
+  .clr-support  { background: #ddd6fe; color: #3b0764; }
+  .clr-training { background: #e9d5ff; color: #3b0764; }
+  .clr-ra-cur   { background: #0891b2; color: #fff; }
+  .clr-ra-upg   { background: #ea580c; color: #fff; }
+  .clr-ra-past  { background: #dc2626; color: #fff; }
+
+  .dot-app      { background: #3b82f6; }
+  .dot-tech     { background: #f59e0b; }
+  .dot-current  { background: #10b981; }
+  .dot-support  { background: #8b5cf6; }
+  .dot-training { background: #a855f7; }
+  .dot-ra-cur   { background: #0891b2; }
+  .dot-ra-upg   { background: #ea580c; }
+  .dot-ra-past  { background: #dc2626; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">RA</div>
+    <div>
+      <h1>SSM Health RA Tracker</h1>
+      <div class="subtitle">Technical Coordinator &mdash; Request Activity Dashboard</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="/">RA Tracker</a>
+    <a class="nav-link active" href="/calendar">Calendar</a>
+  </div>
+  <div class="meta">
+    <div>Q2 2026 Upgrade Timeline</div>
+    <div style="margin-top:2px;">Epic Systems</div>
+  </div>
+</header>
+
+<main>
+  <div class="page-header">
+    <h2>Q2 2026 Upgrade Timeline</h2>
+    <span class="draft-badge">DRAFT · 11.03.25</span>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#bfdbfe;border:1px solid #93c5fd;"></div> Application Track</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#fde68a;border:1px solid #fcd34d;"></div> Technical Upgrade</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#a7f3d0;border:1px solid #6ee7b7;"></div> Current Version / Production</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ddd6fe;border:1px solid #c4b5fd;"></div> Support Environments</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#e9d5ff;border:1px solid #d8b4fe;"></div> Training Track</div>
+    <div class="legend-item"><div class="legend-dot dot-ra-cur"></div> SU RA (Current Version)</div>
+    <div class="legend-item"><div class="legend-dot dot-ra-upg"></div> SU RA (Upgrade)</div>
+    <div class="legend-item"><div class="legend-dot dot-ra-past"></div> SU RA (Past Due)</div>
+    <div class="legend-item"><div class="legend-line" style="background:rgba(220,38,38,.7);"></div> Today</div>
+    <div class="legend-item"><div class="legend-line" style="background:rgba(234,179,8,.85);"></div> Production Update</div>
+  </div>
+
+  <div class="timeline-card">
+    <div class="timeline-scroll-outer" id="tl-scroll">
+
+      <!-- Month header -->
+      <div class="tl-header-row" id="month-header">
+        <div class="tl-label-stub"></div>
+        <div class="tl-months-row" id="months-row"></div>
+      </div>
+
+      <!-- Week header -->
+      <div class="tl-header-row" style="background:#f7f8fb;" id="week-header">
+        <div class="week-label-stub">Track</div>
+        <div class="tl-weeks-row" id="weeks-row"></div>
+      </div>
+
+      <!-- ── Application Track section ── -->
+      <div class="tl-section-header">
+        <div class="tl-section-header-label">Application Track</div>
+        <div class="tl-section-header-area" id="sec-app-markers"></div>
+      </div>
+      <div class="tl-track-row" id="row-app" style="min-height:46px;">
+        <div class="tl-track-label" style="background:#eff6ff;">
+          <div class="track-label-inner">
+            <div class="track-label-name" style="color:#1e40af;">App / Project</div>
+            <div class="track-label-sub">Upgrade Planning</div>
+          </div>
+        </div>
+        <div class="tl-track-area" id="area-app"></div>
+      </div>
+
+      <!-- ── Technical Upgrade section ── -->
+      <div class="tl-section-header">
+        <div class="tl-section-header-label">Technical Upgrade</div>
+        <div class="tl-section-header-area" id="sec-tech-markers"></div>
+      </div>
+      <div class="tl-track-row" id="row-tech" style="min-height:46px;">
+        <div class="tl-track-label" style="background:#fffbeb;">
+          <div class="track-label-inner">
+            <div class="track-label-name" style="color:#92400e;">Env Upgrades</div>
+            <div class="track-label-sub">REL · POC · TST · etc.</div>
+          </div>
+        </div>
+        <div class="tl-track-area" id="area-tech"></div>
+      </div>
+
+      <!-- ── Current Version / Production section ── -->
+      <div class="tl-section-header">
+        <div class="tl-section-header-label">Current Version</div>
+        <div class="tl-section-header-area" id="sec-cur-markers"></div>
+      </div>
+      <div class="tl-track-row" id="row-current" style="min-height:46px;">
+        <div class="tl-track-label" style="background:#f0fdf4;">
+          <div class="track-label-inner">
+            <div class="track-label-name" style="color:#065f46;">Production</div>
+            <div class="track-label-sub">SUs · Monthly Builds</div>
+          </div>
+        </div>
+        <div class="tl-track-area" id="area-current"></div>
+      </div>
+
+      <!-- ── Support & Training section ── -->
+      <div class="tl-section-header">
+        <div class="tl-section-header-label">Support & Training</div>
+        <div class="tl-section-header-area" id="sec-sup-markers"></div>
+      </div>
+      <div class="tl-track-row" id="row-support" style="min-height:46px;">
+        <div class="tl-track-label" style="background:#faf5ff;">
+          <div class="track-label-inner">
+            <div class="track-label-name" style="color:#6b21a8;">Support Envs</div>
+            <div class="track-label-sub">MAP · PSUP · PSUPLB</div>
+          </div>
+        </div>
+        <div class="tl-track-area" id="area-support"></div>
+      </div>
+      <div class="tl-track-row" id="row-training" style="min-height:46px;">
+        <div class="tl-track-label" style="background:#faf5ff;">
+          <div class="track-label-inner">
+            <div class="track-label-name" style="color:#6b21a8;">Training</div>
+            <div class="track-label-sub">MST · REF · ACE</div>
+          </div>
+        </div>
+        <div class="tl-track-area" id="area-training"></div>
+      </div>
+
+      <!-- ── Your RAs section ── -->
+      <div class="tl-section-header">
+        <div class="tl-section-header-label">Your RAs</div>
+        <div class="tl-section-header-area" id="sec-ra-markers"></div>
+      </div>
+      <div class="tl-track-row" id="row-ra-cur" style="min-height:52px;">
+        <div class="tl-track-label" style="background:#ecfeff;">
+          <div class="track-label-inner">
+            <div class="track-label-name" style="color:#155e75;">Current SUs</div>
+            <div class="track-label-sub">PRD target dates</div>
+          </div>
+        </div>
+        <div class="tl-track-area" id="area-ra-cur"></div>
+      </div>
+      <div class="tl-track-row" id="row-ra-upg" style="min-height:52px;">
+        <div class="tl-track-label" style="background:#fff7ed;">
+          <div class="track-label-inner">
+            <div class="track-label-name" style="color:#9a3412;">Upgrade SUs</div>
+            <div class="track-label-sub">PRD target dates</div>
+          </div>
+        </div>
+        <div class="tl-track-area" id="area-ra-upg"></div>
+      </div>
+
+    </div><!-- end scroll outer -->
+  </div><!-- end timeline-card -->
+</main>
+
+<script>
+// ── Data injected from server ──────────────────────────────────────────────────
+const RA_DATA = __RA_DATA__;
+const TODAY_STR = "__TODAY__";
+
+// ── Timeline bounds ────────────────────────────────────────────────────────────
+const TL_START  = new Date("2025-11-17");
+const TL_END    = new Date("2026-04-20");
+const TOTAL_DAYS = (TL_END - TL_START) / 86400000;
+const PX_PER_DAY = 16;
+const AREA_WIDTH  = Math.ceil(TOTAL_DAYS * PX_PER_DAY);
+
+// ── Hardcoded timeline events from Excel ──────────────────────────────────────
+const EVENTS = [
+  // Application Track
+  { area:"area-app", start:"2025-11-24", end:"2026-01-04", label:"Release Note Preview & Triage", cls:"clr-app" },
+  { area:"area-app", start:"2026-01-05", end:"2026-01-18", label:"Release Note Review  (due Jan 16)", cls:"clr-app" },
+  { area:"area-app", start:"2026-01-12", end:"2026-01-12", label:"Project Kickoff", point:true, dotCls:"dot-app", tip:"PROJECT KICKOFF\nJan 12, 2026" },
+  { area:"area-app", start:"2026-01-19", end:"2026-02-01", label:"Build & Unit Testing  (RN due Jan 31)", cls:"clr-app" },
+  { area:"area-app", start:"2026-02-02", end:"2026-02-15", label:"Regression Testing, UAT", cls:"clr-app" },
+  { area:"area-app", start:"2026-02-16", end:"2026-02-22", label:"Build Migration", cls:"clr-app" },
+  { area:"area-app", start:"2026-02-23", end:"2026-03-08", label:"Integrated Testing  (RN due Mar 7)", cls:"clr-app" },
+  { area:"area-app", start:"2026-03-02", end:"2026-03-08", label:"Dress Rehearsal", cls:"clr-app-dr", offsetRow:1 },
+  { area:"area-app", start:"2026-03-09", end:"2026-03-15", label:"Integrated Testing", cls:"clr-app" },
+  { area:"area-app", start:"2026-03-16", end:"2026-03-22", label:"Dress Rehearsal + Integrated Testing", cls:"clr-app-dr" },
+  { area:"area-app", start:"2026-03-23", end:"2026-03-29", label:"Integrated Testing", cls:"clr-app" },
+  { area:"area-app", start:"2026-03-30", end:"2026-04-05", label:"Critical Fix RN due Apr 2  ·  Dress Rehearsal", cls:"clr-app-dr" },
+  { area:"area-app", start:"2026-04-06", end:"2026-04-10", label:"Final Dress Rehearsal  ·  GO/No-GO Apr 7", cls:"clr-app-key" },
+  { area:"area-app", start:"2026-04-13", end:"2026-04-19", label:"Go-Live Support / Stabilization", cls:"clr-app" },
+
+  // Technical Upgrade track
+  { area:"area-tech", start:"2025-11-24", end:"2026-01-04", label:"PSUPLB Refresh & Upgrade", cls:"clr-tech" },
+  { area:"area-tech", start:"2026-01-06", end:"2026-01-08", label:"REL Refresh & Update (Transparent)  Jan 6–8", cls:"clr-tech-env", tip:"REL Refresh and Update (Transparent)\nJan 6, 0800 – Jan 8, EOD" },
+  { area:"area-tech", start:"2026-01-09", end:"2026-01-12", label:"POC Update (Conventional)  Jan 9–12", cls:"clr-tech-env", tip:"POC Update (conventional)\nFri Jan 9, 0800 hrs – Mon Jan 12, EOD" },
+  { area:"area-tech", start:"2026-01-26", end:"2026-01-27", label:"TST Update & CVTST Insert  Jan 26–27", cls:"clr-tech-env", tip:"TST Update (conventional) & CVTST Environment inserted\nMon Jan 26 @0500 – Tue Jan 27" },
+  { area:"area-tech", start:"2026-02-17", end:"2026-02-18", label:"Fix SU Pkg → REL, POC, TST, PSUPLB", cls:"clr-tech-fix", tip:"Fix SU Package\nStart Transparent Install REL: Tue Feb 17, 1200 hrs\nApply REL, POC, TST, PSUPLB: Wed Feb 18, 0700 hrs" },
+  { area:"area-tech", start:"2026-02-27", end:"2026-03-05", label:"REL offline  →  Dress Rehearsal Mar 5", cls:"clr-tech", tip:"REL offline beginning Fri Feb 27, 0700 hrs\nDress Rehearsal: Thu Mar 5, 1300 hrs (REL)\nMigrate app build (Test to REL)" },
+  { area:"area-tech", start:"2026-03-13", end:"2026-03-19", label:"REL offline  →  Dress Rehearsal Mar 19", cls:"clr-tech", tip:"REL offline beginning Fri Mar 13, 0700 hrs\nDress Rehearsal: Thu Mar 19, 1300 hrs (REL)\nMigrate app build (Test to REL)" },
+  { area:"area-tech", start:"2026-03-24", end:"2026-03-25", label:"Critical Fix SU → REL, POC, TST, MAP, PSUPLB", cls:"clr-tech-fix", tip:"Critical Fix SU Package\nStart Transparent in REL: Tue Mar 24, 1200 hrs\nInstall in POC, TST, MAP, PSUPLB, TRAINING: Wed Mar 25, 0700 hrs" },
+  { area:"area-tech", start:"2026-04-02", end:"2026-04-07", label:"REL offline  →  Final DR + GO/No-GO Apr 7", cls:"clr-tech", tip:"REL offline beginning Thu Apr 2, 0700 hrs\nFinal Dress Rehearsal: Tue Apr 7, 1300 hrs (REL)\nGO/No-GO Decision: Tue Apr 7, 1600 hrs" },
+  { area:"area-tech", start:"2026-04-08", end:"2026-04-11", label:"Transparent Apr 8  →  Prod Update Apr 11", cls:"clr-tech-fix", tip:"Start Transparent: Wed Apr 8, 1700 hrs\nProduction Update: Sat Apr 11, 0200 hrs" },
+  { area:"area-tech", start:"2026-04-15", end:"2026-04-15", label:"Critical Fix AdHoc SU Window  Apr 15", point:true, dotCls:"dot-tech", tip:"Critical Fix AdHoc only SU Install Window\nWed Apr 15, 0200 hrs" },
+
+  // Current Version / Production
+  { area:"area-current", start:"2026-01-14", end:"2026-01-14", label:"Monthly Build/SU  Jan 14", point:true, dotCls:"dot-current", tip:"Monthly Epic Build/SU\nWed Jan 14, 0200 hrs" },
+  { area:"area-current", start:"2026-01-16", end:"2026-01-16", label:"Conventional Install TST/MST/PSUPLB  Jan 16", point:true, dotCls:"dot-current", tip:"Conventional Install: TST, MST, PSUPLB\nThu Jan 16, 0700 hrs" },
+  { area:"area-current", start:"2026-01-20", end:"2026-01-20", label:"Receive Feb SU Pkg  Jan 20", point:true, dotCls:"dot-current", tip:"Receive Feb SU Package\nJan 20" },
+  { area:"area-current", start:"2026-01-21", end:"2026-01-21", label:"DR Failover  Jan 21", point:true, dotCls:"dot-current", tip:"DR Failover\nJan 21" },
+  { area:"area-current", start:"2026-02-04", end:"2026-02-04", label:"DR Failback  Feb 4", point:true, dotCls:"dot-current", tip:"DR Failback\nFeb 4" },
+  { area:"area-current", start:"2026-02-11", end:"2026-02-11", label:"Monthly Build/SU  Feb 11", point:true, dotCls:"dot-current", tip:"Monthly Epic Build/SU\nWed Feb 11, 0200 hrs" },
+  { area:"area-current", start:"2026-03-02", end:"2026-03-08", label:"No Prod SU Pkg for March", cls:"clr-current", tip:"No Production SU Package for March" },
+
+  // Support Environments
+  { area:"area-support", start:"2026-03-10", end:"2026-03-10", label:"MAP Update  Mar 10", point:true, dotCls:"dot-support", tip:"MAP Update\nTue Mar 10, 0700 hrs" },
+  { area:"area-support", start:"2026-04-09", end:"2026-04-09", label:"PSUP2M Update  Apr 9", point:true, dotCls:"dot-support", tip:"PSUP2M Update\nThu Apr 9, 0700 hrs" },
+  { area:"area-support", start:"2026-04-10", end:"2026-04-10", label:"PSUPLB Refresh  Apr 10", point:true, dotCls:"dot-support", tip:"PSUPLB Refresh\nFri Apr 10, 0700 hrs" },
+  { area:"area-support", start:"2026-04-11", end:"2026-04-11", label:"PSUP2M & PSUP Refresh  Apr 11", point:true, dotCls:"dot-support", tip:"PSUP2M Refresh approx 0345 hrs (2 hr duration)\nPSUP Update and Refresh approx 0345 hrs (6 hrs)" },
+
+  // Training
+  { area:"area-training", start:"2026-02-19", end:"2026-02-19", label:"Training Update  Feb 19", point:true, dotCls:"dot-training", tip:"TRAINING ENVS UPDATE (conventional)\nThu Feb 19, 0700 hrs\nMST, EUPLY, ACE 5 (disconnect MST from REF)\nIncludes Fix SU Pkg" },
+  { area:"area-training", start:"2026-04-01", end:"2026-04-01", label:"Training Update  Apr 1", point:true, dotCls:"dot-training", tip:"TRAINING ENVS UPDATE (conventional)\nWed Apr 1, 0700 hrs\nREF, PREP, PLY, ACE 1–4" },
+];
+
+// ── Utilities ──────────────────────────────────────────────────────────────────
+function dateToX(dateStr) {
+  const d = new Date(dateStr);
+  const days = (d - TL_START) / 86400000;
+  return Math.round(days * PX_PER_DAY);
+}
+
+function parsePrdDate(title) {
+  const m = title.match(/for PRD (?:on|by)\s+(\d{1,2})-(\d{1,2})-(\d{2,4})/i);
+  if (!m) return null;
+  let [, mo, dy, yr] = m;
+  if (yr.length === 2) yr = '20' + yr;
+  try {
+    const d = new Date(`${yr}-${mo.padStart(2,'0')}-${dy.padStart(2,'0')}`);
+    if (isNaN(d)) return null;
+    return d.toISOString().slice(0, 10);
+  } catch { return null; }
+}
+
+function isInPast(dateStr) {
+  return dateStr < TODAY_STR;
+}
+
+// ── Render helpers ─────────────────────────────────────────────────────────────
+function addBar(areaId, ev) {
+  const area = document.getElementById(areaId);
+  if (!area) return;
+  const x1   = dateToX(ev.start);
+  const x2   = dateToX(ev.end) + PX_PER_DAY;
+  const w    = Math.max(x2 - x1, 4);
+  const row  = ev.offsetRow || 0;
+  const top  = 11 + row * 28;
+
+  // Expand row height if needed
+  const trackRow = area.closest('.tl-track-row');
+  const neededH  = top + 24 + 8;
+  if (trackRow && trackRow.offsetHeight < neededH) {
+    trackRow.style.minHeight = neededH + 'px';
+  }
+
+  const el = document.createElement('div');
+  el.className = 'ev-bar ' + (ev.cls || '');
+  if (isInPast(ev.end)) el.classList.add('past');
+  el.style.left  = x1 + 'px';
+  el.style.width = w + 'px';
+  el.style.top   = top + 'px';
+  el.textContent = ev.label;
+  if (ev.tip) el.setAttribute('data-tip', ev.tip);
+  else        el.title = ev.label;
+  area.appendChild(el);
+}
+
+function addPoint(areaId, ev) {
+  const area = document.getElementById(areaId);
+  if (!area) return;
+  const x = dateToX(ev.start);
+  const wrap = document.createElement('div');
+  wrap.className = 'ev-point-wrap';
+  wrap.style.left  = x + 'px';
+  wrap.style.width = '1px';
+  if (ev.tip) wrap.setAttribute('data-tip', ev.tip);
+
+  const dot = document.createElement('div');
+  dot.className = 'ev-dot ' + (ev.dotCls || '');
+  if (isInPast(ev.start)) dot.classList.add('past');
+  wrap.appendChild(dot);
+
+  const lbl = document.createElement('div');
+  lbl.className = 'ev-point-label';
+  lbl.textContent = ev.label;
+  wrap.appendChild(lbl);
+
+  area.appendChild(wrap);
+}
+
+function addKeyMarker(areaId, dateStr, label, color) {
+  const area = document.getElementById(areaId);
+  if (!area) return;
+  const x = dateToX(dateStr);
+  const el = document.createElement('div');
+  el.className = 'ev-key';
+  el.style.left = x + 'px';
+  el.style.background = color;
+  el.style.borderColor = 'rgba(255,255,255,.8)';
+  area.appendChild(el);
+  const lbl = document.createElement('div');
+  lbl.className = 'ev-key-label';
+  lbl.style.left = x + 'px';
+  lbl.style.color = color;
+  lbl.textContent = label;
+  area.appendChild(lbl);
+}
+
+function addVGridLine(areaId, x) {
+  const area = document.getElementById(areaId);
+  if (!area) return;
+  const el = document.createElement('div');
+  el.className = 'vgrid-line';
+  el.style.left = x + 'px';
+  area.appendChild(el);
+}
+
+function addMarkerLine(areaId, x, cls) {
+  const area = document.getElementById(areaId);
+  if (!area) return;
+  const el = document.createElement('div');
+  el.className = cls;
+  el.style.left = x + 'px';
+  area.appendChild(el);
+}
+
+// ── Set area widths ────────────────────────────────────────────────────────────
+function setAreaWidths() {
+  document.querySelectorAll('.tl-track-area, .tl-months-row, .tl-weeks-row, .tl-section-header-area').forEach(el => {
+    el.style.minWidth = AREA_WIDTH + 'px';
+    el.style.width    = AREA_WIDTH + 'px';
+    el.style.position = 'relative';
+  });
+}
+
+// ── Build month labels ─────────────────────────────────────────────────────────
+function buildMonths() {
+  const row = document.getElementById('months-row');
+  const months = ['Nov','Dec','Jan','Feb','Mar','Apr'];
+  const starts = ['2025-11-17','2025-12-01','2026-01-01','2026-02-01','2026-03-01','2026-04-01'];
+  const ends   = ['2025-11-30','2025-12-31','2026-01-31','2026-02-28','2026-03-31','2026-04-20'];
+  months.forEach((m, i) => {
+    const x1 = dateToX(starts[i]);
+    const x2 = dateToX(ends[i]) + PX_PER_DAY;
+    const el = document.createElement('div');
+    el.className = 'month-label';
+    el.style.left  = x1 + 'px';
+    el.style.width = (x2 - x1) + 'px';
+    el.textContent = m + (starts[i].includes('2025') ? ' 2025' : ' 2026');
+    row.appendChild(el);
+  });
+}
+
+// ── Build week labels and grid lines ──────────────────────────────────────────
+function buildWeeks() {
+  const row   = document.getElementById('weeks-row');
+  const areas = ['area-app','area-tech','area-current','area-support','area-training','area-ra-cur','area-ra-upg',
+                 'sec-app-markers','sec-tech-markers','sec-cur-markers','sec-sup-markers','sec-ra-markers'];
+
+  let d = new Date(TL_START);
+  while (d <= TL_END) {
+    const ds  = d.toISOString().slice(0,10);
+    const x   = dateToX(ds);
+    const lbl = document.createElement('div');
+    lbl.className = 'week-label';
+    lbl.style.left = x + 'px';
+    const mo  = d.getMonth() + 1;
+    const dy  = d.getDate();
+    lbl.textContent = mo + '/' + dy;
+    row.appendChild(lbl);
+    areas.forEach(a => addVGridLine(a, x));
+    d = new Date(d.getTime() + 7 * 86400000);
+  }
+}
+
+// ── Build today + upgrade markers ─────────────────────────────────────────────
+function buildMarkers() {
+  const allAreas = ['area-app','area-tech','area-current','area-support','area-training','area-ra-cur','area-ra-upg'];
+  const xToday   = dateToX(TODAY_STR);
+  const xUpgrade = dateToX("2026-04-11");
+  allAreas.forEach(a => {
+    addMarkerLine(a, xToday,   'marker-today');
+    addMarkerLine(a, xUpgrade, 'marker-upgrade');
+  });
+  // Labels in the month header area
+  const mRow = document.getElementById('months-row');
+  ['marker-today','marker-upgrade'].forEach((cls, i) => {
+    const x = i === 0 ? xToday : xUpgrade;
+    const el = document.createElement('div');
+    el.style.position = 'absolute';
+    el.style.left = x + 'px';
+    el.style.top = '0px';
+    el.style.height = '22px';
+    el.style.width = '2px';
+    el.style.background = i === 0 ? 'rgba(220,38,38,.7)' : 'rgba(234,179,8,.85)';
+    el.style.zIndex = '50';
+    mRow.appendChild(el);
+    const lbl = document.createElement('div');
+    lbl.style.position = 'absolute';
+    lbl.style.left = (x + 3) + 'px';
+    lbl.style.top = '4px';
+    lbl.style.fontSize = '8px';
+    lbl.style.fontWeight = '800';
+    lbl.style.color = i === 0 ? '#dc2626' : '#b45309';
+    lbl.style.whiteSpace = 'nowrap';
+    lbl.textContent = i === 0 ? '▲ Today' : '▲ Prod Update';
+    mRow.appendChild(lbl);
+  });
+}
+
+// ── Render RA events ───────────────────────────────────────────────────────────
+function renderRAs() {
+  const suCurrent = RA_DATA.filter(r => r.type === 'Special Update' && !r.upgrade_ver);
+  const suUpgrade = RA_DATA.filter(r => r.type === 'Special Update' &&  r.upgrade_ver);
+
+  function renderSURow(ras, areaId) {
+    ras.forEach((ra, idx) => {
+      const prd = parsePrdDate(ra.title);
+      if (!prd) return;
+      const past = isInPast(prd);
+      const isUpgrade = !!ra.upgrade_ver;
+      const dotCls = past ? 'dot-ra-past' : (isUpgrade ? 'dot-ra-upg' : 'dot-ra-cur');
+      const area = document.getElementById(areaId);
+      if (!area) return;
+      const x = dateToX(prd);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'ev-point-wrap';
+      wrap.style.left  = x + 'px';
+      wrap.style.width = '1px';
+      wrap.style.zIndex = '15';
+
+      const dot = document.createElement('div');
+      dot.className = 'ev-dot ' + dotCls;
+      wrap.appendChild(dot);
+
+      const lbl = document.createElement('div');
+      lbl.className = 'ev-point-label';
+      lbl.textContent = 'RA ' + ra.ra_num;
+      wrap.appendChild(lbl);
+
+      // Stagger rows to avoid overlap
+      dot.style.marginTop = (10 + (idx % 3) * 14) + 'px';
+      lbl.style.marginTop = '2px';
+
+      const tip = (past ? '⚠ PAST DUE\n' : '') +
+                  'RA ' + ra.ra_num + '\n' +
+                  ra.title.replace(/RA \d+ - /,'').substring(0, 60) + '\n' +
+                  'PRD Target: ' + prd + '\n' +
+                  'Owner: ' + ra.primary_owner;
+      wrap.setAttribute('data-tip', tip);
+
+      area.appendChild(wrap);
+    });
+
+    // Expand row height
+    const trackRow = document.getElementById(areaId)?.closest('.tl-track-row');
+    if (trackRow) trackRow.style.minHeight = '62px';
+  }
+
+  renderSURow(suCurrent, 'area-ra-cur');
+  renderSURow(suUpgrade, 'area-ra-upg');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+function init() {
+  setAreaWidths();
+  buildMonths();
+  buildWeeks();
+  buildMarkers();
+
+  // Render hardcoded events
+  EVENTS.forEach(ev => {
+    if (ev.point) addPoint(ev.area, ev);
+    else          addBar(ev.area, ev);
+  });
+
+  // Key milestone diamonds
+  addKeyMarker('area-app',  '2026-04-11', 'UPGRADE', '#1d4ed8');
+  addKeyMarker('area-tech', '2026-04-11', 'PRD Apr 11', '#d97706');
+
+  // RA events
+  renderRAs();
+}
+
+init();
+</script>
+</body>
+</html>
