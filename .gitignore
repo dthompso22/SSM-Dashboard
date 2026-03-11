@@ -1,4 +1,7 @@
+# Per-machine user notes (not shared)
 ra_notes.json
+
+# Python cache
 __pycache__/
 *.pyc
 *.pyo

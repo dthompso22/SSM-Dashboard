@@ -11,38 +11,12 @@ UPGRADE_VER      = "November 2025"
 UPGRADE_PRD_DATE = "2026-04-11"
 UPGRADE_PRD_DISP = "April 11, 2026"
 
-NOTES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_notes.json")
+NOTES_FILE   = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_notes.json")
+RA_DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_data.json")
 
-# Only the 24 RAs confirmed present on SSM's Sherlock Home page
-# (cross-referenced via Sherlock_Home_20260311-005722.xml export)
-# envs: non-PRD environments where RA is already installed per XPG_ENV_RA_AND_REL
-# status 'done' = Completed or has install date; 'pending' = status 2
-RA_DATA = [
-    {"pkg_id": 1912959, "ra_num": 5750, "title": "Licensing: Enable Synopsis Insights ELF",                                       "created": "2026-03-09", "type": "Licensing Change",   "primary_owner": "THOMPSON, DAVID",         "envs": {}},
-    {"pkg_id": 1909830, "ra_num": 5746, "title": "RA 5746 - Special Update Package - May 2025 DPE Fix SU for PRD on 3-4-26",       "created": "2026-02-27", "type": "Special Update",      "primary_owner": "EMANUELSON, ERIK",        "envs": {"PSUP": "done", "PSUP2": "done", "CVTST": "done"}},
-    {"pkg_id": 1909841, "ra_num": 5747, "title": "RA 5747 - Special Update Package - Nov 2025 DPE Fix SU for PRD on 4-8-26",       "created": "2026-02-27", "type": "Special Update",      "primary_owner": "EMANUELSON, ERIK",        "envs": {}, "upgrade_ver": True},
-    {"pkg_id": 1909019, "ra_num": 5745, "title": "RA 5745 - Special Update Package - Ad hoc SU's for PRD on 3-5-26",               "created": "2026-02-26", "type": "Special Update",      "primary_owner": "THOMPSON, DAVID",         "envs": {"PSUP": "done", "PSUP2": "done", "CVTST": "done"}},
-    {"pkg_id": 1904969, "ra_num": 5743, "title": "Licensing: Enable Remote Patient Monitoring ELFs",                              "created": "2026-02-16", "type": "Licensing Change",   "primary_owner": "EMANUELSON, ERIK",        "envs": {"REL": "done", "TST": "done", "POC": "done", "MST": "done", "PSUPLB": "done"}},
-    {"pkg_id": 1904544, "ra_num": 5741, "title": "Enable Automatic Updates to Turbocharger Content",                              "created": "2026-02-13", "type": "Other",               "primary_owner": "EMANUELSON, ERIK",        "envs": {"POC": "done"}},
-    {"pkg_id": 1903997, "ra_num": 5739, "title": "RA 5739 - Special Update Package - Nov '25 SU's for PRD on 4-11-26",             "created": "2026-02-12", "type": "Special Update",      "primary_owner": "THOMPSON, DAVID",         "envs": {"REL": "done", "TST": "done", "POC": "done", "PSUPLB": "done"}, "upgrade_ver": True},
-    {"pkg_id": 1901571, "ra_num": 5737, "title": "RA 5737 - Special Update Package - Bugsy Nov 25 SU's for PRD on 4-8-2025",       "created": "2026-02-06", "type": "Special Update",      "primary_owner": "EMANUELSON, ERIK",        "envs": {"REL": "done", "TST": "done", "POC": "done", "PSUPLB": "done"}, "upgrade_ver": True},
-    {"pkg_id": 1897923, "ra_num": 5727, "title": "Licensing: Enable ELFs for Upgrade to Nov 2025",                                "created": "2026-01-29", "type": "Licensing Change",   "primary_owner": "EMANUELSON, ERIK",        "envs": {}},
-    {"pkg_id": 1894374, "ra_num": 5718, "title": "RA 5718 - Special Update Package - November 2025 Equivalent SU's for PRD on 4-8-2026", "created": "2026-01-19", "type": "Special Update", "primary_owner": "EMANUELSON, ERIK",       "envs": {"REL": "done", "POC": "done", "PSUPLB": "done"}, "upgrade_ver": True},
-    {"pkg_id": 1889178, "ra_num": 5711, "title": "RA 5711 - Special Update Package - Nov '25 SU's for PRD on 4-11-2026",           "created": "2026-01-05", "type": "Special Update",      "primary_owner": "THOMPSON, DAVID",         "envs": {"REL": "done", "PSUPLB": "done"}, "upgrade_ver": True},
-    {"pkg_id": 1883975, "ra_num": 5698, "title": "RA 5698 - Special Update Package - Ad hoc Reg SU's for PRD by 12-31-2025",       "created": "2025-12-15", "type": "Special Update",      "primary_owner": "THOMPSON, DAVID",         "envs": {"REL": "done", "TST": "done", "POC": "done", "PSUP": "done", "MST": "done", "PSUP2": "done", "MAP": "done", "CVTST": "done"}},
-    {"pkg_id": 1873244, "ra_num": 5688, "title": "Update to Nov 2025 - TS pre and post steps",                                    "created": "2025-11-17", "type": "Upgrade Activity",    "primary_owner": "THOMPSON, DAVID",         "envs": {}},
-    {"pkg_id": 1873243, "ra_num": 5687, "title": "RA 5687 - Special Update Package - Nov 2025 Initial SU's for PRD on 4-11-2026",  "created": "2025-11-17", "type": "Special Update",      "primary_owner": "THOMPSON, DAVID",         "envs": {}, "upgrade_ver": True},
-    {"pkg_id": 1867398, "ra_num": 5681, "title": "License Request: Additional Project One Modules (Hello World functionality)",   "created": "2025-11-03", "type": "Licensing Change",   "primary_owner": "EMANUELSON, ERIK",        "envs": {"REL": "done", "TST": "done", "POC": "done", "MST": "done", "MAP": "done"}},
-    {"pkg_id": 1849838, "ra_num": 5655, "title": "RA 5655 - Special Update Package - May 2025 Pre-Upgrade Critical Fix SU's for PRD on 10-11-2025", "created": "2025-09-22", "type": "Special Update", "primary_owner": "BROWN, JUSTIN", "envs": {"REL": "done", "TST": "done", "POC": "done", "PSUP": "done", "MST": "done", "PSUP2": "done", "PSUPLB": "done", "MAP": "done"}, "upgrade_ver": True},
-    {"pkg_id": 1829704, "ra_num": 5622, "title": "License Request: Additional Project One Modules (BMT, Genomics)",               "created": "2025-07-25", "type": "Licensing Change",   "primary_owner": "WARTMAN, MICHAEL",        "envs": {"REL": "done", "TST": "done", "POC": "done", "MST": "done", "PSUPLB": "done", "MAP": "done"}},
-    {"pkg_id": 1824472, "ra_num": 5604, "title": "License Request: Project One Modules",                                          "created": "2025-07-10", "type": "Licensing Change",   "primary_owner": "THOMPSON, DAVID",         "envs": {}},
-    {"pkg_id": 1824475, "ra_num": 5605, "title": "License Request: TEFCA",                                                        "created": "2025-07-10", "type": "Licensing Change",   "primary_owner": "THOMPSON, DAVID",         "envs": {}},
-    {"pkg_id": 1816577, "ra_num": 5585, "title": "Permission to update ADC record to include Guesthouse",                         "created": "2025-06-19", "type": "License Counts",      "primary_owner": "THOMPSON, DAVID",         "envs": {"POC": "done"}},
-    {"pkg_id": 1740855, "ra_num": 5474, "title": "Cupid Structural Heart Patient Tracking Build",                                 "created": "2024-11-15", "type": "Build Assistance",    "primary_owner": "HAGE, GEORGE",            "envs": {}},
-    {"pkg_id": 1740350, "ra_num": 5471, "title": "Community Library Extract (Twice Per Year)",                                    "created": "2024-11-14", "type": "Other",               "primary_owner": "EMANUELSON, ERIK",        "envs": {"RPT": "done"}},
-    {"pkg_id": 1734848, "ra_num": 5459, "title": "Rerun Application Data Counts in Shadow after run failures",                    "created": "2024-10-30", "type": "License Counts",      "primary_owner": "EMANUELSON, ERIK",        "envs": {"RPT": "done"}},
-    {"pkg_id": 1444955, "ra_num": 4726, "title": "LPP and LPG Discrete Parameter Conversion Utility",                            "created": "2021-06-07", "type": "Upgrade Activity",    "primary_owner": "EMANUELSON, ERIK",        "envs": {}},
-]
+def load_ra_data():
+    with open(RA_DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 ENVS = ["PRD", "PSUP", "PSUP2", "REL", "TST", "POC", "MST", "PSUPLB", "MAP", "CVTST", "RPT", "SHD"]
 
@@ -731,7 +705,7 @@ init();
 def index():
     today_str = date.today().isoformat()
     annotated = []
-    for ra in RA_DATA:
+    for ra in load_ra_data():
         r = dict(ra)
         r["cat"] = get_category(r["type"])
         if r["type"] == "Special Update":

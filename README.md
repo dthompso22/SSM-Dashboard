@@ -43,105 +43,30 @@ Then open http://localhost:5050 in your browser.
 
 ## Updating RA Data from Track
 
-The RA data in `ra_dashboard.py` is sourced from the Epic Track database. When RAs change (new ones added, old ones completed), run the query below in PowerShell to pull fresh data, then update `RA_DATA` in `ra_dashboard.py`.
+All RA data lives in `ra_data.json`. A single script queries Epic Track and regenerates this file automatically — no manual editing required.
 
-### PowerShell Query
-
-Save the following as a `.ps1` file and run it, or paste directly into a PowerShell window:
+### Run the update script
 
 ```powershell
-$conn = New-Object System.Data.SqlClient.SqlConnection(
-    'Server=thor.epic.com;Database=Track;Integrated Security=True;TrustServerCertificate=True;'
-)
-$conn.Open()
-$cmd = $conn.CreateCommand()
-
-$cmd.CommandText = "
-SELECT
-    xpg.PACKAGE_ID,
-    xpg.RA_NUM,
-    xpg.TITLE,
-    xpg.STATUS_C,
-    xpg.CREATION_DATE,
-    xpg.PACKAGE_TYPE_C,
-    pt.NAME AS PACKAGE_TYPE,
-    STUFF((
-        SELECT ', ' + e.USER_NAME
-        FROM XPG_RA_CONTACT_PER cp2
-        JOIN EMP_EMPLOYEE_BASIC e ON e.USER_NUMBER = cp2.CONTACT_STAFF_ID
-        WHERE cp2.PACKAGE_ID = xpg.PACKAGE_ID AND cp2.CNTCT_PERSON_TYPE_C IN (4,5)
-        FOR XML PATH('')
-    ), 1, 2, '') AS OWNERS,
-    STUFF((
-        SELECT ', ' + e2.USER_NAME
-        FROM XPG_RA_CONTACT_PER cp3
-        JOIN EMP_EMPLOYEE_BASIC e2 ON e2.USER_NUMBER = cp3.CONTACT_STAFF_ID
-        WHERE cp3.PACKAGE_ID = xpg.PACKAGE_ID AND cp3.CNTCT_PERSON_TYPE_C = 4
-        FOR XML PATH('')
-    ), 1, 2, '') AS PRIMARY_OWNER
-FROM XPG_NOADD_SINGLE_T xpg
-LEFT JOIN ZC_PACKAGE_TYPE pt ON pt.PACKAGE_TYPE_C = xpg.PACKAGE_TYPE_C
-WHERE xpg.CUSTOMER_ID = '618'              -- SSM Health
-  AND xpg.STATUS_C IN (10, 20)            -- New or In Progress only
-  AND EXISTS (
-      SELECT 1 FROM XPG_RA_CONTACT_PER
-      WHERE PACKAGE_ID = xpg.PACKAGE_ID
-        AND CONTACT_STAFF_ID IN ('38098', '23858')  -- Thompson or Emanuelson
-        AND CNTCT_PERSON_TYPE_C IN (4, 5)
-  )
-ORDER BY xpg.CREATION_DATE DESC
-"
-
-$reader = $cmd.ExecuteReader()
-while ($reader.Read()) {
-    Write-Host "$($reader['PACKAGE_ID'])|$($reader['RA_NUM'])|$($reader['TITLE'])|$($reader['STATUS_C'])|$($reader['CREATION_DATE'])|$($reader['PACKAGE_TYPE'])|$($reader['PRIMARY_OWNER'])|$($reader['OWNERS'])"
-}
-$reader.Close()
-$conn.Close()
+powershell -ExecutionPolicy Bypass -File "C:\path\to\ra_dashboard\Update-RAData.ps1"
 ```
 
-### Getting Environment Installation Status
+This will:
+1. Query Track for all New/In Progress RAs at SSM Health owned by Thompson or Emanuelson
+2. Pull environment installation status for each RA
+3. Overwrite `ra_data.json` with the latest data
+4. Print a summary of how many RAs were found
 
-To pull which non-PRD environments each RA is installed in:
+Then **restart the dashboard** and **commit + push** `ra_data.json` so the rest of the team gets the update:
 
 ```powershell
-$conn = New-Object System.Data.SqlClient.SqlConnection(
-    'Server=thor.epic.com;Database=Track;Integrated Security=True;TrustServerCertificate=True;'
-)
-$conn.Open()
-$cmd = $conn.CreateCommand()
-
-# Replace with your actual PACKAGE_IDs (comma-separated)
-$pkgIds = "1912959,1909830,1909841"
-
-$cmd.CommandText = "
-SELECT
-    era.PACKAGE_ID,
-    env.SHORT_NAME,
-    era.INSTALL_STATUS_C,
-    era.INSTALL_DATE,
-    era.APPLICABLE_YN,
-    era.REQUIRE_W_UPGRD_YN
-FROM XPG_ENV_RA_AND_REL era
-JOIN SLG_RA_ENVIRONMENT env ON env.ENV_ID = era.ENV_ID
-WHERE era.PACKAGE_ID IN ($pkgIds)
-  AND env.CUSTOMER_ID = '618'
-  AND era.APPLICABLE_YN = 'Y'
-ORDER BY era.PACKAGE_ID, env.SHORT_NAME
-"
-
-$reader = $cmd.ExecuteReader()
-while ($reader.Read()) {
-    Write-Host "$($reader['PACKAGE_ID'])|$($reader['SHORT_NAME'])|$($reader['INSTALL_STATUS_C'])|$($reader['INSTALL_DATE'])|$($reader['REQUIRE_W_UPGRD_YN'])"
-}
-$reader.Close()
-$conn.Close()
+# In the ra_dashboard folder:
+git add ra_data.json
+git commit -m "Refresh RA data from Track"
+git push
 ```
 
-**Install status interpretation:**
-- `INSTALL_STATUS_C = 3` → **done**
-- `INSTALL_STATUS_C = 2` → **pending**
-- `APPLICABLE_YN != 'Y'` → skip (not applicable to this env)
+> **Must be on Epic network or VPN** to reach `thor.epic.com`.
 
 ---
 
