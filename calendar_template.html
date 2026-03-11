@@ -36,8 +36,8 @@
   .nav-link.active { background: rgba(255,255,255,.15); color: #fff; }
   .meta { font-size: 12px; color: #8faecf; text-align: right; }
 
-  /* ── Page layout ── */
   main { padding: 20px 20px 60px; }
+
   .page-hdr {
     display: flex; align-items: baseline; gap: 12px;
     padding-bottom: 12px; border-bottom: 2px solid #1a2b4a; margin-bottom: 16px;
@@ -62,133 +62,136 @@
   .leg-line { width: 20px; height: 2px; }
 
   /* ── Timeline card ── */
-  .tl-card { background: #fff; border-radius: 10px; box-shadow: 0 1px 5px rgba(0,0,0,.07), 0 3px 12px rgba(0,0,0,.05); overflow: clip; }
+  .tl-card {
+    background: #fff; border-radius: 10px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.07), 0 3px 12px rgba(0,0,0,.05);
+    overflow: clip;
+  }
 
-  /* ── Sticky header (outside scroll, synced via JS) ── */
+  /* ── Sticky header (outside scroll, JS-synced) ── */
   #tl-sticky-hdr {
     position: sticky; top: 56px; z-index: 200;
     box-shadow: 0 1px 4px rgba(0,0,0,.12);
   }
   .hdr-row { display: flex; overflow: hidden; }
-  .hdr-row-months { background: #1a2b4a; height: 24px; }
-  .hdr-row-weeks  { background: #f7f8fb; height: 22px; border-bottom: 1px solid #e2e6ee; }
+  .hdr-months { background: #1a2b4a; height: 24px; }
+  .hdr-weeks  { background: #f7f8fb; height: 22px; border-bottom: 1px solid #e2e6ee; }
   .hdr-stub {
-    width: 150px; min-width: 150px; flex-shrink: 0;
+    width: 156px; min-width: 156px; flex-shrink: 0;
     border-right: 1px solid rgba(255,255,255,.15);
   }
-  .hdr-stub-weeks {
+  .hdr-stub-wk {
     background: #f7f8fb; border-right: 1px solid #e2e6ee;
     display: flex; align-items: center; padding-left: 10px;
-    font-size: 9px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .4px;
+    font-size: 9px; font-weight: 700; color: #6b7280;
+    text-transform: uppercase; letter-spacing: .4px;
   }
   .hdr-clip { flex: 1; overflow: hidden; position: relative; }
-  .hdr-inner { position: absolute; left: 0; top: 0; height: 100%; will-change: transform; }
+  .hdr-inner { position: absolute; left: 0; top: 0; height: 100%; }
 
-  /* ── Section headers inside scroll ── */
-  .sec-hdr {
-    display: flex; border-top: 2px solid #1a2b4a; border-bottom: 1px solid #e2e6ee;
-    background: #f7f8fb; min-height: 24px;
-  }
-  .sec-hdr-lbl {
-    width: 150px; min-width: 150px; flex-shrink: 0;
-    position: sticky; left: 0; z-index: 60;
-    background: #f7f8fb; border-right: 1px solid #e2e6ee;
+  /* ── Section dividers ── */
+  .sec-hdr { display: flex; border-top: 2px solid #1a2b4a; border-bottom: 1px solid #e2e6ee; background: #f7f8fb; min-height: 26px; }
+  .sec-lbl {
+    width: 156px; min-width: 156px; flex-shrink: 0;
+    position: sticky; left: 0; z-index: 60; background: #f7f8fb;
+    border-right: 1px solid #e2e6ee;
     display: flex; align-items: center; padding: 0 10px;
     font-size: 9px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; color: #1a2b4a;
   }
-  .sec-hdr-area { flex: 1; position: relative; }
+  .sec-area { flex: 1; position: relative; min-height: 26px; }
 
   /* ── Track rows ── */
   .track-row { display: flex; border-bottom: 1px solid #edf0f5; }
-  .track-row:last-child { border-bottom: none; }
   .track-lbl {
-    width: 150px; min-width: 150px; flex-shrink: 0;
+    width: 156px; min-width: 156px; flex-shrink: 0;
     position: sticky; left: 0; z-index: 50;
     border-right: 1px solid #e2e6ee;
-    display: flex; align-items: flex-start; padding: 10px;
+    display: flex; align-items: flex-start;
+    padding: 10px 10px;
   }
   .track-lbl-inner { display: flex; flex-direction: column; gap: 2px; }
-  .track-lbl-name  { font-size: 10px; font-weight: 700; letter-spacing: .2px; white-space: nowrap; }
-  .track-lbl-sub   { font-size: 9px;  color: #9ca3af; white-space: nowrap; }
-  .track-area { flex: 1; position: relative; }
+  .track-lbl-name { font-size: 10px; font-weight: 700; letter-spacing: .2px; white-space: nowrap; }
+  .track-lbl-sub  { font-size: 9px; color: #9ca3af; white-space: nowrap; }
+  .track-area { flex: 1; position: relative; overflow: visible; }
 
   /* ── Scroll container ── */
   #tl-scroll { overflow-x: auto; overflow-y: visible; }
 
   /* ── Grid lines ── */
-  .vline { position: absolute; top: 0; bottom: 0; width: 1px; background: #f0f2f5; pointer-events: none; z-index: 1; }
+  .vline       { position: absolute; top: 0; bottom: 0; width: 1px; background: #f0f2f5; pointer-events: none; z-index: 1; }
   .vline-month { background: #e2e6ee; }
 
-  /* ── Vertical markers ── */
-  .marker-today   { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(220,38,38,.7);  pointer-events: none; z-index: 25; }
-  .marker-upgrade { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(202,138,4,.9);  pointer-events: none; z-index: 25; }
+  /* ── Markers ── */
+  .mk-today   { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(220,38,38,.75); pointer-events: none; z-index: 20; }
+  .mk-upgrade { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(202,138,4,.9);  pointer-events: none; z-index: 20; }
 
-  /* ── Month labels ── */
+  /* ── Month/week labels ── */
   .month-lbl {
     position: absolute; top: 0; height: 24px;
     display: flex; align-items: center; padding-left: 6px;
     font-size: 10px; font-weight: 700; letter-spacing: .4px; color: #cbd5e1;
     border-left: 1px solid rgba(255,255,255,.1);
+    white-space: nowrap;
   }
-  /* ── Week labels ── */
   .week-lbl {
     position: absolute; top: 0; height: 22px;
     display: flex; align-items: center; padding-left: 3px;
     font-size: 9px; color: #9ca3af;
-    border-left: 1px solid #e2e6ee;
-    white-space: nowrap;
+    border-left: 1px solid #e2e6ee; white-space: nowrap;
   }
 
-  /* ── Event bars ── */
+  /* ── Bars ── */
   .ev-bar {
-    position: absolute; height: 22px;
-    border-radius: 4px;
-    display: flex; align-items: center; padding: 0 6px;
+    position: absolute; height: 24px; border-radius: 4px;
+    display: flex; align-items: center; padding: 0 7px;
     font-size: 9px; font-weight: 700;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    cursor: default; transition: filter .12s; z-index: 10;
+    cursor: default; transition: filter .12s, opacity .12s; z-index: 10;
+    min-width: 6px;
   }
-  .ev-bar:hover { filter: brightness(1.1); z-index: 20; }
+  .ev-bar:hover { filter: brightness(1.1); z-index: 30; overflow: visible; }
   .ev-bar.past  { opacity: .4; }
 
-  /* ── Event dots ── */
+  /* ── Dots ── */
   .ev-dot-wrap {
-    position: absolute; width: 1px; z-index: 15; cursor: default;
+    position: absolute; width: 1px; z-index: 12; cursor: default;
     display: flex; flex-direction: column; align-items: center;
   }
   .ev-dot {
     width: 10px; height: 10px; border-radius: 50%;
-    border: 2px solid rgba(255,255,255,.7); flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,.7); flex-shrink: 0; margin-left: -4px;
   }
   .ev-dot.past { opacity: .4; }
 
-  /* ── RA pin markers ── */
-  .ra-pin {
-    position: absolute; display: flex; flex-direction: column; align-items: center;
-    cursor: default; z-index: 20;
+  /* ── RA pin zone divider ── */
+  .ra-zone-line {
+    position: absolute; left: 0; right: 0; height: 1px;
+    background: #e2e6ee; pointer-events: none; z-index: 5;
   }
-  .ra-pin-line  { width: 1px; height: 10px; }
+
+  /* ── RA pins ── */
+  .ra-pin {
+    position: absolute; display: flex; flex-direction: column;
+    align-items: flex-start; cursor: default; z-index: 15;
+  }
+  .ra-pin-head {
+    display: flex; align-items: center; gap: 4px;
+  }
+  .ra-pin-tick {
+    width: 2px; height: 10px; border-radius: 1px; flex-shrink: 0;
+  }
   .ra-pin-badge {
     font-size: 8px; font-weight: 800; letter-spacing: .2px;
-    padding: 2px 5px; border-radius: 3px; color: #fff;
-    white-space: nowrap; border: 1px solid rgba(255,255,255,.3);
+    padding: 2px 6px; border-radius: 3px; color: #fff;
+    white-space: nowrap; flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,.25);
+    line-height: 1.4;
   }
   .ra-pin-num {
-    font-size: 7px; font-weight: 700; color: #6b7280;
-    margin-top: 1px; white-space: nowrap;
+    font-size: 8px; color: #6b7280; margin-left: 16px;
+    white-space: nowrap; line-height: 1.3; margin-top: 1px;
   }
-  .ra-pin.past .ra-pin-badge { opacity: .6; }
-
-  /* ── Key milestone ── */
-  .ev-key {
-    position: absolute; width: 12px; height: 12px;
-    transform: translateX(-50%) rotate(45deg);
-    border: 2px solid rgba(255,255,255,.8); z-index: 22; cursor: default;
-  }
-  .ev-key-lbl {
-    position: absolute; font-size: 9px; font-weight: 800; letter-spacing: .3px;
-    white-space: nowrap; z-index: 22; pointer-events: none;
-  }
+  .ra-pin.past .ra-pin-badge { opacity: .65; }
 
   /* ── Colors ── */
   .c-app     { background: #bfdbfe; color: #1e3a8a; }
@@ -203,8 +206,7 @@
   .d-app  { background: #3b82f6; }
   .d-tech { background: #d97706; }
   .d-cur  { background: #10b981; }
-  .d-sup  { background: #8b5cf6; }
-  .d-trn  { background: #a855f7; }
+  .d-sup  { background: #7c3aed; }
 
   .ra-cur  { background: #0891b2; }
   .ra-upg  { background: #ea580c; }
@@ -215,9 +217,8 @@
     position: fixed; z-index: 9999;
     background: #1a2b4a; color: #fff;
     font-size: 11px; padding: 6px 10px; border-radius: 6px;
-    max-width: 280px; line-height: 1.55; pointer-events: none;
-    display: none; box-shadow: 0 3px 10px rgba(0,0,0,.35);
-    white-space: pre-line;
+    max-width: 300px; line-height: 1.6; pointer-events: none;
+    display: none; box-shadow: 0 3px 10px rgba(0,0,0,.35); white-space: pre-line;
   }
 </style>
 </head>
@@ -254,33 +255,29 @@
     <div class="leg"><div class="leg-dot" style="background:#0891b2;"></div> Current SU RA</div>
     <div class="leg"><div class="leg-dot" style="background:#ea580c;"></div> Upgrade SU RA</div>
     <div class="leg"><div class="leg-dot" style="background:#dc2626;"></div> Past-Due RA</div>
-    <div class="leg"><div class="leg-line" style="background:rgba(220,38,38,.7);"></div> Today</div>
+    <div class="leg"><div class="leg-line" style="background:rgba(220,38,38,.75);"></div> Today</div>
     <div class="leg"><div class="leg-line" style="background:rgba(202,138,4,.9);"></div> Production Update</div>
   </div>
 
   <div class="tl-card">
-
-    <!-- Sticky header — synced to tl-scroll via JS -->
     <div id="tl-sticky-hdr">
-      <div class="hdr-row hdr-row-months">
+      <div class="hdr-row hdr-months">
         <div class="hdr-stub"></div>
         <div class="hdr-clip"><div class="hdr-inner" id="months-inner"></div></div>
       </div>
-      <div class="hdr-row hdr-row-weeks">
-        <div class="hdr-stub hdr-stub-weeks">Track</div>
+      <div class="hdr-row hdr-weeks">
+        <div class="hdr-stub hdr-stub-wk">Track</div>
         <div class="hdr-clip"><div class="hdr-inner" id="weeks-inner"></div></div>
       </div>
     </div>
 
-    <!-- Scrollable track content -->
     <div id="tl-scroll">
 
-      <!-- Project / Application -->
       <div class="sec-hdr">
-        <div class="sec-hdr-lbl">Project / App</div>
-        <div class="sec-hdr-area" id="sec-app"></div>
+        <div class="sec-lbl">Project / App</div>
+        <div class="sec-area" id="sec-app"></div>
       </div>
-      <div class="track-row" id="row-app" style="min-height:46px;">
+      <div class="track-row" id="row-app">
         <div class="track-lbl" style="background:#eff6ff;">
           <div class="track-lbl-inner">
             <div class="track-lbl-name" style="color:#1e40af;">Application</div>
@@ -290,393 +287,446 @@
         <div class="track-area" id="area-app"></div>
       </div>
 
-      <!-- Technical / Upgrade (combined) -->
       <div class="sec-hdr">
-        <div class="sec-hdr-lbl">Technical / Upgrade</div>
-        <div class="sec-hdr-area" id="sec-tech"></div>
+        <div class="sec-lbl">Technical / Upgrade</div>
+        <div class="sec-area" id="sec-tech"></div>
       </div>
-      <div class="track-row" id="row-tech" style="min-height:130px;">
+      <div class="track-row" id="row-tech">
         <div class="track-lbl" style="background:#fffbeb;">
           <div class="track-lbl-inner">
             <div class="track-lbl-name" style="color:#92400e;">Env Upgrades</div>
             <div class="track-lbl-sub">REL · POC · TST</div>
             <div class="track-lbl-sub">Support · Training</div>
-            <div class="track-lbl-sub" style="margin-top:4px;color:#ea580c;font-weight:700;">Nov 2025 SUs</div>
+            <div class="track-lbl-sub" style="margin-top:5px;color:#ea580c;font-weight:700;">Nov 2025 SUs ▼</div>
           </div>
         </div>
         <div class="track-area" id="area-tech"></div>
       </div>
 
-      <!-- Current Version / Production -->
       <div class="sec-hdr">
-        <div class="sec-hdr-lbl">Current Version</div>
-        <div class="sec-hdr-area" id="sec-cur"></div>
+        <div class="sec-lbl">Current Version</div>
+        <div class="sec-area" id="sec-cur"></div>
       </div>
-      <div class="track-row" id="row-current" style="min-height:82px;">
+      <div class="track-row" id="row-current">
         <div class="track-lbl" style="background:#f0fdf4;">
           <div class="track-lbl-inner">
             <div class="track-lbl-name" style="color:#065f46;">Production</div>
             <div class="track-lbl-sub">SUs · Monthly Builds</div>
-            <div class="track-lbl-sub" style="margin-top:4px;color:#0891b2;font-weight:700;">May 2025 SUs</div>
+            <div class="track-lbl-sub" style="margin-top:5px;color:#0891b2;font-weight:700;">May 2025 SUs ▼</div>
           </div>
         </div>
         <div class="track-area" id="area-current"></div>
       </div>
 
-    </div><!-- end tl-scroll -->
-  </div><!-- end tl-card -->
+    </div>
+  </div>
 </main>
 
-<!-- Floating tooltip -->
 <div id="tl-tip"></div>
 
 <script>
-// ── Injected data ──────────────────────────────────────────────────────────────
+// ── Injected ──────────────────────────────────────────────────────────────────
 const RA_DATA   = __RA_DATA__;
 const TODAY_STR = "__TODAY__";
 
-// ── Dynamic timeline bounds (~1 month back, ~4 months forward) ────────────────
+// ── Dynamic timeline bounds ───────────────────────────────────────────────────
 function prevMonday(d) {
-  const day = d.getDay();
-  const diff = day === 0 ? 6 : day - 1;
+  const day = d.getDay(), diff = day === 0 ? 6 : day - 1;
   return new Date(d.getTime() - diff * 86400000);
 }
-const todayDate  = new Date(TODAY_STR);
-const TL_START   = prevMonday(new Date(todayDate.getTime() - 35 * 86400000));
-const TL_END     = new Date(Math.max(
+const todayDate = new Date(TODAY_STR);
+const TL_START  = prevMonday(new Date(todayDate.getTime() - 35 * 86400000));
+const TL_END    = new Date(Math.max(
   todayDate.getTime() + 120 * 86400000,
   new Date("2026-05-01").getTime()
 ));
 const TOTAL_DAYS = Math.ceil((TL_END - TL_START) / 86400000);
-const PPD        = 16;   // pixels per day
-const AREA_W     = TOTAL_DAYS * PPD;
+const PPD   = 16;                   // pixels per day
+const AW    = TOTAL_DAYS * PPD;     // total area width
 
 // ── Layout constants ──────────────────────────────────────────────────────────
-const ROW_H   = 32;  // px between event rows within a track
-const BAR_TOP = 10;  // top of row-0 bars
-const DOT_TOP = 13;  // top of row-0 dot center
-
-// RA zone y-position within each track (below the event rows)
-const RA_Y_TECH    = 98;
-const RA_Y_CURRENT = 48;
+const BAR_TOP   = 10;   // top padding inside track
+const BAR_H     = 24;   // bar height px
+const ROW_H     = 32;   // px between event rows (bar_h + gap)
+const DOT_FP    = 14;   // collision footprint radius for dots (px)
+const PIN_GAP   = 10;   // gap from event zone to RA pin zone
+const PIN_ROW_H = 42;   // height per RA pin row
+const BOT_PAD   = 10;   // bottom padding
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
-function dateX(ds) {
-  return Math.round((new Date(ds) - TL_START) / 86400000 * PPD);
-}
-function inRange(ds) { return new Date(ds) >= TL_START && new Date(ds) <= TL_END; }
-function isPast(ds)  { return ds < TODAY_STR; }
+function dx(ds)      { return Math.round((new Date(ds) - TL_START) / 86400000 * PPD); }
+function vis(ds, de) { return new Date(de||ds) >= TL_START && new Date(ds) <= TL_END; }
+function past(ds)    { return ds < TODAY_STR; }
 
 function parsePrd(title) {
   const m = title.match(/for PRD (?:on|by)\s+(\d{1,2})-(\d{1,2})-(\d{2,4})/i);
   if (!m) return null;
-  let [, mo, dy, yr] = m;
+  let [,mo,dy,yr] = m;
   if (yr.length === 2) yr = '20' + yr;
-  try {
-    const d = new Date(`${yr}-${mo.padStart(2,'0')}-${dy.padStart(2,'0')}`);
-    return isNaN(d) ? null : d.toISOString().slice(0,10);
-  } catch { return null; }
+  try { const d = new Date(`${yr}-${mo.padStart(2,'0')}-${dy.padStart(2,'0')}`); return isNaN(d) ? null : d.toISOString().slice(0,10); }
+  catch { return null; }
 }
 
-function suVersionLabel(ra) {
+function suLabel(ra) {
   const t = ra.title;
-  if (/May.?2025/i.test(t))                                 return 'May 2025 SU';
-  if (/Nov(?:ember)?.?(?:2025|'?25)|Bugsy/i.test(t))        return 'Nov 2025 SU';
-  if (/Ad.?hoc/i.test(t))                                   return 'Ad Hoc SU';
+  if (/May.?2025/i.test(t))                            return 'May 2025 SU';
+  if (/Nov(?:ember)?.?(?:2025|'?25)|Bugsy/i.test(t))   return 'Nov 2025 SU';
+  if (/Ad.?hoc/i.test(t))                              return 'Ad Hoc SU';
   return 'SU #' + ra.ra_num;
 }
 
-// ── Tooltip ───────────────────────────────────────────────────────────────────
-const tip = document.getElementById('tl-tip');
-function addTip(el, text) {
-  el.addEventListener('mouseenter', e => { tip.textContent = text; tip.style.display = 'block'; move(e); });
-  el.addEventListener('mousemove',  move);
-  el.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
-}
-function move(e) {
-  const tx = Math.min(e.clientX + 14, window.innerWidth - 295);
-  const ty = e.clientY - tip.offsetHeight - 10;
-  tip.style.left = tx + 'px';
-  tip.style.top  = (ty < 62 ? e.clientY + 18 : ty) + 'px';
+function fmtOwner(s) {
+  const p = s.split(', ');
+  return p.length === 2
+    ? p[1][0]+p[1].slice(1).toLowerCase()+' '+p[0][0]+p[0].slice(1).toLowerCase()
+    : s;
 }
 
-// ── Render helpers ────────────────────────────────────────────────────────────
-function setAreaW() {
-  document.querySelectorAll('.track-area, .sec-hdr-area, .hdr-inner').forEach(el => {
-    el.style.minWidth = AREA_W + 'px';
-    el.style.width    = AREA_W + 'px';
+// ── Tooltip ───────────────────────────────────────────────────────────────────
+const tipEl = document.getElementById('tl-tip');
+function tip(el, text) {
+  el.addEventListener('mouseenter', e => { tipEl.textContent = text; tipEl.style.display = 'block'; mv(e); });
+  el.addEventListener('mousemove', mv);
+  el.addEventListener('mouseleave', () => { tipEl.style.display = 'none'; });
+}
+function mv(e) {
+  const x = Math.min(e.clientX + 14, window.innerWidth - 316);
+  const y = e.clientY - tipEl.offsetHeight - 10;
+  tipEl.style.left = x + 'px';
+  tipEl.style.top  = (y < 62 ? e.clientY + 18 : y) + 'px';
+}
+
+// ── Greedy interval scheduling: assigns _row to each event ───────────────────
+// bars: [{start, end}], dots: [{start}] combined
+function layoutEvents(events) {
+  const sorted = [...events].sort((a, b) => new Date(a.start) - new Date(b.start));
+  const rowEnds = [];
+  sorted.forEach(ev => {
+    const x1 = Math.max(0, dx(ev.start));
+    // bars use their real end; dots get a small footprint
+    const x2 = ev._isDot
+      ? dx(ev.start) + DOT_FP * 2
+      : Math.min(AW, dx(ev.end) + PPD);
+    const gap = ev._isDot ? DOT_FP : 4;
+    let r = 0;
+    while (r < rowEnds.length && (rowEnds[r] || 0) > x1 - gap) r++;
+    ev._row = r;
+    rowEnds[r] = x2;
+  });
+  return rowEnds.length || 1;
+}
+
+// RA pins: greedy by prd date, stacks them into rows based on badge footprint
+function layoutPins(items) {
+  const sorted = [...items].sort((a, b) => new Date(a.prd) - new Date(b.prd));
+  const rowEnds = [];
+  sorted.forEach(item => {
+    const x = dx(item.prd);
+    const xEnd = x + 90; // approximate badge width
+    let r = 0;
+    while (r < rowEnds.length && (rowEnds[r] || 0) > x - 4) r++;
+    item._pinRow = r;
+    rowEnds[r] = xEnd;
+  });
+  return rowEnds.length || 0;
+}
+
+// ── Set widths ────────────────────────────────────────────────────────────────
+function setWidths() {
+  document.querySelectorAll('.track-area,.sec-area,.hdr-inner').forEach(el => {
+    el.style.minWidth = el.style.width = AW + 'px';
   });
 }
 
-function addVLines() {
+// ── Month / week headers ──────────────────────────────────────────────────────
+function buildHeader() {
+  const mi = document.getElementById('months-inner');
+  const wi = document.getElementById('weeks-inner');
+  mi.style.width = wi.style.width = AW + 'px';
+
+  let m = new Date(TL_START.getFullYear(), TL_START.getMonth(), 1);
+  while (m <= TL_END) {
+    const next = new Date(m.getFullYear(), m.getMonth() + 1, 1);
+    const x1 = Math.max(0, Math.round((m - TL_START) / 86400000 * PPD));
+    const x2 = Math.round((next - TL_START) / 86400000 * PPD);
+    const el = document.createElement('div');
+    el.className = 'month-lbl';
+    el.style.left = x1 + 'px'; el.style.width = (x2 - x1) + 'px';
+    el.textContent = m.toLocaleString('default',{month:'long'}) + ' ' + m.getFullYear();
+    mi.appendChild(el);
+    m = next;
+  }
+
+  let w = new Date(TL_START);
+  while (w <= TL_END) {
+    const x = Math.round((w - TL_START) / 86400000 * PPD);
+    const el = document.createElement('div');
+    el.className = 'week-lbl'; el.style.left = x + 'px';
+    el.textContent = (w.getMonth()+1) + '/' + w.getDate();
+    wi.appendChild(el);
+    w = new Date(w.getTime() + 7 * 86400000);
+  }
+}
+
+// ── Vertical grid lines ───────────────────────────────────────────────────────
+function buildGrid() {
   const areas = ['area-app','area-tech','area-current','sec-app','sec-tech','sec-cur'];
-  let d = new Date(TL_START);
-  while (d <= TL_END) {
-    const x = Math.round((d - TL_START) / 86400000 * PPD);
-    const isMonthStart = d.getDate() === 1;
+  let w = new Date(TL_START);
+  while (w <= TL_END) {
+    const x = Math.round((w - TL_START) / 86400000 * PPD);
+    const isMo = w.getDate() === 1;
     areas.forEach(id => {
       const el = document.createElement('div');
-      el.className = 'vline' + (isMonthStart ? ' vline-month' : '');
+      el.className = 'vline' + (isMo ? ' vline-month' : '');
       el.style.left = x + 'px';
       document.getElementById(id)?.appendChild(el);
     });
-    d = new Date(d.getTime() + 7 * 86400000);
+    w = new Date(w.getTime() + 7 * 86400000);
   }
 }
 
-function buildMonths() {
-  const inner = document.getElementById('months-inner');
-  inner.style.width = AREA_W + 'px';
-  let d = new Date(TL_START.getFullYear(), TL_START.getMonth(), 1);
-  while (d <= TL_END) {
-    const nextMonth = new Date(d.getFullYear(), d.getMonth() + 1, 1);
-    const x1 = Math.max(0, Math.round((d - TL_START) / 86400000 * PPD));
-    const x2 = Math.round((nextMonth - TL_START) / 86400000 * PPD);
-    const el = document.createElement('div');
-    el.className = 'month-lbl';
-    el.style.left  = x1 + 'px';
-    el.style.width = (x2 - x1) + 'px';
-    el.textContent = d.toLocaleString('default',{month:'short'}) + ' ' + d.getFullYear();
-    inner.appendChild(el);
-    d = nextMonth;
-  }
-}
-
-function buildWeeks() {
-  const inner = document.getElementById('weeks-inner');
-  inner.style.width = AREA_W + 'px';
-  let d = new Date(TL_START);
-  while (d <= TL_END) {
-    const x = Math.round((d - TL_START) / 86400000 * PPD);
-    const el = document.createElement('div');
-    el.className = 'week-lbl';
-    el.style.left = x + 'px';
-    el.textContent = (d.getMonth()+1) + '/' + d.getDate();
-    inner.appendChild(el);
-    d = new Date(d.getTime() + 7 * 86400000);
-  }
-}
-
+// ── Today / upgrade markers ───────────────────────────────────────────────────
 function buildMarkers() {
   const areas = ['area-app','area-tech','area-current','sec-app','sec-tech','sec-cur'];
-  const xT = dateX(TODAY_STR);
-  const xU = dateX('2026-04-11');
+  const xT = dx(TODAY_STR), xU = dx('2026-04-11');
   areas.forEach(id => {
-    ['marker-today','marker-upgrade'].forEach((cls, i) => {
-      const x = i === 0 ? xT : xU;
-      if (x < 0 || x > AREA_W) return;
-      const el = document.createElement('div');
-      el.className = cls;
-      el.style.left = x + 'px';
+    [['mk-today', xT],['mk-upgrade', xU]].forEach(([cls, x]) => {
+      if (x < 0 || x > AW) return;
+      const el = document.createElement('div'); el.className = cls; el.style.left = x + 'px';
       document.getElementById(id)?.appendChild(el);
     });
   });
   // Labels in month header
-  const inner = document.getElementById('months-inner');
-  [{x:xT, label:'▲ Today', color:'#ef4444'}, {x:xU, label:'▲ Prod Update', color:'#ca8a04'}].forEach(({x, label, color}) => {
-    if (x < 0 || x > AREA_W) return;
-    const lbl = document.createElement('div');
-    lbl.style.cssText = `position:absolute;left:${x+3}px;top:4px;font-size:8px;font-weight:800;color:${color};white-space:nowrap;z-index:5;pointer-events:none;`;
-    lbl.textContent = label;
-    inner.appendChild(lbl);
+  const mi = document.getElementById('months-inner');
+  [{x:xT, label:'▲ Today', c:'#ef4444'},{x:xU, label:'▲ Prod Update', c:'#ca8a04'}].forEach(({x,label,c}) => {
+    if (x < 0 || x > AW) return;
+    const el = document.createElement('div');
+    el.style.cssText = `position:absolute;left:${x+3}px;top:4px;font-size:8px;font-weight:800;color:${c};white-space:nowrap;pointer-events:none;`;
+    el.textContent = label; mi.appendChild(el);
   });
 }
 
-function addBar(areaId, {start, end, label, cls, row=0, tip:tipText}) {
-  if (new Date(end) < TL_START || new Date(start) > TL_END) return;
-  const x1 = Math.max(0, dateX(start));
-  const x2 = Math.min(AREA_W, dateX(end) + PPD);
+// ── Render bar ────────────────────────────────────────────────────────────────
+function renderBar(areaId, ev) {
+  if (!vis(ev.start, ev.end)) return;
+  const x1 = Math.max(0, dx(ev.start));
+  const x2 = Math.min(AW, dx(ev.end) + PPD);
   const el = document.createElement('div');
-  el.className = 'ev-bar ' + (cls||'');
-  if (isPast(end)) el.classList.add('past');
+  el.className = 'ev-bar ' + (ev.cls||'');
+  if (past(ev.end)) el.classList.add('past');
   el.style.left   = x1 + 'px';
-  el.style.width  = Math.max(x2 - x1, 4) + 'px';
-  el.style.top    = (BAR_TOP + row * ROW_H) + 'px';
-  el.textContent  = label;
-  if (tipText) addTip(el, tipText); else el.title = label;
+  el.style.width  = Math.max(x2 - x1, 6) + 'px';
+  el.style.top    = (BAR_TOP + ev._row * ROW_H) + 'px';
+  el.textContent  = ev.label;
+  if (ev.tipText) tip(el, ev.tipText); else el.title = ev.label;
   document.getElementById(areaId)?.appendChild(el);
 }
 
-function addDot(areaId, {start, label, dotCls, row=0, tip:tipText}) {
-  if (!inRange(start)) return;
-  const x = dateX(start);
+// ── Render dot ────────────────────────────────────────────────────────────────
+function renderDot(areaId, ev) {
+  if (!vis(ev.start)) return;
+  const x = dx(ev.start);
   const wrap = document.createElement('div');
   wrap.className = 'ev-dot-wrap';
   wrap.style.left = x + 'px';
   const dot = document.createElement('div');
-  dot.className = 'ev-dot ' + (dotCls||'');
-  dot.style.marginTop = (DOT_TOP + row * ROW_H) + 'px';
-  if (isPast(start)) dot.classList.add('past');
+  dot.className = 'ev-dot ' + (ev.dotCls||'');
+  dot.style.marginTop = (BAR_TOP + 6 + ev._row * ROW_H) + 'px';
+  if (past(ev.start)) dot.classList.add('past');
   wrap.appendChild(dot);
-  if (tipText) addTip(wrap, tipText); else wrap.title = label;
+  if (ev.tipText) tip(wrap, ev.tipText); else wrap.title = ev.label;
   document.getElementById(areaId)?.appendChild(wrap);
 }
 
-function addRAPin(areaId, ra, prd, yTop, xOff) {
-  if (!inRange(prd)) return;
-  const x    = dateX(prd) + xOff;
-  const past = isPast(prd);
+// ── Render RA pin ─────────────────────────────────────────────────────────────
+function renderPin(areaId, item, zoneTop) {
+  if (!vis(item.prd)) return;
+  const x    = dx(item.prd);
+  const ra   = item.ra;
+  const ipast = past(item.prd);
   const isUpg = !!ra.upgrade_ver;
-  const bgCls = past ? 'ra-past' : (isUpg ? 'ra-upg' : 'ra-cur');
-  const ver   = suVersionLabel(ra);
+  const bgCls = ipast ? 'ra-past' : (isUpg ? 'ra-upg' : 'ra-cur');
+  const lbl   = suLabel(ra);
 
   const pin = document.createElement('div');
-  pin.className = 'ra-pin' + (past ? ' past' : '');
+  pin.className = 'ra-pin' + (ipast ? ' past' : '');
   pin.style.left = x + 'px';
-  pin.style.top  = yTop + 'px';
+  pin.style.top  = (zoneTop + item._pinRow * PIN_ROW_H) + 'px';
 
-  const line = document.createElement('div');
-  line.className = 'ra-pin-line ' + bgCls;
-  pin.appendChild(line);
+  const head = document.createElement('div');
+  head.className = 'ra-pin-head';
+
+  const tick = document.createElement('div');
+  tick.className = 'ra-pin-tick ' + bgCls;
 
   const badge = document.createElement('div');
   badge.className = 'ra-pin-badge ' + bgCls;
-  badge.textContent = (past ? '⚠ ' : '') + ver;
-  pin.appendChild(badge);
+  badge.textContent = (ipast ? '⚠ ' : '') + lbl;
+
+  head.appendChild(tick); head.appendChild(badge);
+  pin.appendChild(head);
 
   const num = document.createElement('div');
   num.className = 'ra-pin-num';
-  num.textContent = 'RA ' + ra.ra_num;
+  num.textContent = 'RA ' + ra.ra_num + ' · ' + fmtOwner(ra.primary_owner);
   pin.appendChild(num);
 
-  const owner = ra.primary_owner.split(', ').reverse().map(p => p[0]+p.slice(1).toLowerCase()).join(' ');
-  addTip(pin, (past ? '⚠ PAST DUE\n' : '') + 'RA ' + ra.ra_num + '\n' + ra.title.replace(/^RA \d+ - /,'').substring(0,70) + '\nPRD Target: ' + prd + '\nOwner: ' + owner);
+  tip(pin, (ipast ? '⚠ PAST DUE\n' : '') + 'RA ' + ra.ra_num + '\n' +
+    ra.title.replace(/^RA \d+ - /,'').substring(0,72) + '\nPRD target: ' + item.prd +
+    '\nOwner: ' + fmtOwner(ra.primary_owner));
 
   document.getElementById(areaId)?.appendChild(pin);
 }
 
-function addKeyMark(areaId, dateStr, label, color, yTop=14) {
-  if (!inRange(dateStr)) return;
-  const x = dateX(dateStr);
+// ── Separator line between events and RA zone ─────────────────────────────────
+function renderZoneLine(areaId, y) {
+  const el = document.createElement('div');
+  el.className = 'ra-zone-line'; el.style.top = y + 'px';
+  document.getElementById(areaId)?.appendChild(el);
+}
+
+// ── Build a complete track ────────────────────────────────────────────────────
+// bars: [{start,end,label,cls,tipText}]
+// dots: [{start,label,dotCls,tipText}]
+// pins: [{ra, prd}] or null
+function buildTrack(rowId, areaId, bars, dots, pins) {
   const area = document.getElementById(areaId);
-  const diamond = document.createElement('div');
-  diamond.className = 'ev-key';
-  diamond.style.cssText = `left:${x}px;top:${yTop}px;background:${color};`;
-  area.appendChild(diamond);
-  const lbl = document.createElement('div');
-  lbl.className = 'ev-key-lbl';
-  lbl.style.cssText = `left:${x}px;top:${yTop+18}px;color:${color};transform:translateX(-50%);`;
-  lbl.textContent = label;
-  area.appendChild(lbl);
+  if (!area) return;
+
+  // Filter to visible range
+  const vbars = bars.filter(b => vis(b.start, b.end));
+  const vdots = dots.filter(d => vis(d.start));
+
+  // Tag as bar vs dot for unified layout
+  vbars.forEach(b => b._isDot = false);
+  vdots.forEach(d => d._isDot = true);
+
+  // Run layout on combined set
+  const allEvs = [...vbars, ...vdots];
+  const numRows = allEvs.length ? layoutEvents(allEvs) : 0;
+
+  // Render bars and dots
+  vbars.forEach(b => renderBar(areaId, b));
+  vdots.forEach(d => renderDot(areaId, d));
+
+  const eventZoneH = BAR_TOP + numRows * ROW_H;
+
+  // Render RA pins
+  let pinZoneH = 0;
+  if (pins && pins.length) {
+    const vpins = pins.filter(p => vis(p.prd));
+    if (vpins.length) {
+      const numPinRows = layoutPins(vpins);
+      const zoneTop = eventZoneH + PIN_GAP;
+      renderZoneLine(areaId, zoneTop - 2);
+      vpins.forEach(p => renderPin(areaId, p, zoneTop));
+      pinZoneH = PIN_GAP + numPinRows * PIN_ROW_H;
+    }
+  }
+
+  const totalH = eventZoneH + pinZoneH + BOT_PAD;
+  document.getElementById(rowId).style.minHeight = totalH + 'px';
+  area.style.minHeight = totalH + 'px';
 }
 
 // ── Event definitions ─────────────────────────────────────────────────────────
-const BARS = [
-  // ── Application Track ──
-  { a:'area-app', start:'2025-11-24', end:'2026-01-04', label:'Release Note Preview & Triage',           cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-01-05', end:'2026-01-18', label:'Release Note Review  (due Jan 16)',        cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-01-19', end:'2026-02-01', label:'Build & Unit Testing  (RN due Jan 31)',    cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-02-02', end:'2026-02-15', label:'Regression Testing, UAT',                 cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-02-16', end:'2026-02-22', label:'Build Migration',                         cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-02-23', end:'2026-03-08', label:'Integrated Testing  (RN due Mar 7)',       cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-03-02', end:'2026-03-08', label:'Dress Rehearsal',                         cls:'c-app-dr',  row:1 },
-  { a:'area-app', start:'2026-03-09', end:'2026-03-15', label:'Integrated Testing',                      cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-03-16', end:'2026-03-22', label:'Dress Rehearsal + Integrated Testing',    cls:'c-app-dr',  row:0 },
-  { a:'area-app', start:'2026-03-23', end:'2026-03-29', label:'Integrated Testing',                      cls:'c-app',     row:0 },
-  { a:'area-app', start:'2026-03-30', end:'2026-04-05', label:'Critical Fix RN due Apr 2  ·  Dress Rehearsal', cls:'c-app-dr', row:0 },
-  { a:'area-app', start:'2026-04-06', end:'2026-04-10', label:'Final DR  ·  GO/No-GO Apr 7',             cls:'c-app-key', row:0 },
-  { a:'area-app', start:'2026-04-13', end:'2026-04-19', label:'Go-Live Support / Stabilization',         cls:'c-app',     row:0 },
-
-  // ── Technical / Upgrade (env updates) ──
-  { a:'area-tech', start:'2025-11-24', end:'2026-01-04', label:'PSUPLB Refresh & Upgrade',               cls:'c-tech',   row:0 },
-  { a:'area-tech', start:'2026-01-06', end:'2026-01-08', label:'REL Transparent Refresh  Jan 6–8',       cls:'c-tech-e', row:0, tip:'REL Refresh and Update (Transparent)\nJan 6 0800 hrs – Jan 8 EOD' },
-  { a:'area-tech', start:'2026-01-09', end:'2026-01-12', label:'POC Update (Conv.)  Jan 9–12',           cls:'c-tech-e', row:1, tip:'POC Update (conventional)\nFri Jan 9 0800 hrs – Mon Jan 12 EOD' },
-  { a:'area-tech', start:'2026-01-26', end:'2026-01-27', label:'TST Update & CVTST  Jan 26–27',          cls:'c-tech-e', row:0, tip:'TST Update (conventional) & CVTST Environment inserted\nMon Jan 26 @0500 – Tue Jan 27' },
-  { a:'area-tech', start:'2026-02-17', end:'2026-02-18', label:'Fix SU Pkg → REL, POC, TST, PSUPLB',    cls:'c-tech-f', row:0, tip:'Fix SU Package\nTransparent REL: Tue Feb 17 1200 hrs\nApply REL, POC, TST, PSUPLB: Wed Feb 18 0700 hrs' },
-  { a:'area-tech', start:'2026-02-27', end:'2026-03-05', label:'REL offline → Dress Rehearsal  Mar 5',   cls:'c-tech',   row:0, tip:'REL offline beginning: Fri Feb 27 0700 hrs\nDress Rehearsal: Thu Mar 5 1300 hrs (REL)\nMigrate app build (Test to REL)' },
-  { a:'area-tech', start:'2026-03-13', end:'2026-03-19', label:'REL offline → Dress Rehearsal  Mar 19',  cls:'c-tech',   row:0, tip:'REL offline beginning: Fri Mar 13 0700 hrs\nDress Rehearsal: Thu Mar 19 1300 hrs (REL)\nMigrate app build (Test to REL)' },
-  { a:'area-tech', start:'2026-03-24', end:'2026-03-25', label:'Critical Fix SU → REL, POC, TST, MAP',  cls:'c-tech-f', row:0, tip:'Critical Fix SU Package\nTransparent REL: Tue Mar 24 1200 hrs\nInstall POC, TST, MAP, PSUPLB, TRAINING: Wed Mar 25 0700 hrs' },
-  { a:'area-tech', start:'2026-04-02', end:'2026-04-07', label:'REL offline → Final DR + GO/No-GO  Apr 7', cls:'c-tech', row:0, tip:'REL offline beginning: Thu Apr 2 0700 hrs\nFinal Dress Rehearsal: Tue Apr 7 1300 hrs\nGO/No-GO Decision: Tue Apr 7 1600 hrs' },
-  { a:'area-tech', start:'2026-04-08', end:'2026-04-11', label:'Transparent Apr 8  →  Prod Update Apr 11', cls:'c-tech-f', row:0, tip:'Start Transparent: Wed Apr 8 1700 hrs\nProduction Update: Sat Apr 11 0200 hrs' },
-
-  // ── Current Version / Production ──
-  { a:'area-current', start:'2026-03-02', end:'2026-03-08', label:'No Prod SU Pkg for March', cls:'c-cur-no', row:0, tip:'No Production SU Package for March' },
+const APP_BARS = [
+  { start:'2025-11-24', end:'2026-01-04', label:'Release Note Preview & Triage',             cls:'c-app' },
+  { start:'2026-01-05', end:'2026-01-18', label:'Release Note Review  (due Jan 16)',           cls:'c-app' },
+  { start:'2026-01-19', end:'2026-02-01', label:'Build & Unit Testing  (RN due Jan 31)',       cls:'c-app' },
+  { start:'2026-02-02', end:'2026-02-15', label:'Regression Testing, UAT',                    cls:'c-app' },
+  { start:'2026-02-16', end:'2026-02-22', label:'Build Migration',                            cls:'c-app' },
+  { start:'2026-02-23', end:'2026-03-08', label:'Integrated Testing  (RN due Mar 7)',          cls:'c-app' },
+  { start:'2026-03-02', end:'2026-03-08', label:'Dress Rehearsal',                            cls:'c-app-dr' },
+  { start:'2026-03-09', end:'2026-03-15', label:'Integrated Testing',                         cls:'c-app' },
+  { start:'2026-03-16', end:'2026-03-22', label:'Dress Rehearsal + Integrated Testing',       cls:'c-app-dr' },
+  { start:'2026-03-23', end:'2026-03-29', label:'Integrated Testing',                         cls:'c-app' },
+  { start:'2026-03-30', end:'2026-04-05', label:'Critical Fix RN due Apr 2  ·  Dress Rehearsal', cls:'c-app-dr' },
+  { start:'2026-04-06', end:'2026-04-10', label:'Final DR  ·  GO/No-GO Apr 7',                cls:'c-app-key',
+    tipText:'Final Dress Rehearsal: Tue Apr 7 1300 hrs (REL)\nGO/No-GO Decision: Tue Apr 7 1600 hrs\nREL offline beginning Thu Apr 2 0700 hrs' },
+  { start:'2026-04-13', end:'2026-04-19', label:'Go-Live Support / Stabilization',            cls:'c-app' },
+];
+const APP_DOTS = [
+  { start:'2026-01-12', label:'Project Kickoff', dotCls:'d-app', tipText:'PROJECT KICKOFF\nJan 12, 2026' },
+  { start:'2026-04-11', label:'UPGRADE',          dotCls:'d-app', tipText:'UPGRADE\nSat Apr 11 0200 hrs' },
 ];
 
-const DOTS = [
-  // App track
-  { a:'area-app', start:'2026-01-12', label:'Project Kickoff',  dotCls:'d-app', row:0, tip:'PROJECT KICKOFF\nJan 12, 2026' },
-  { a:'area-app', start:'2026-04-11', label:'UPGRADE',          dotCls:'d-app', row:0, tip:'UPGRADE\nSat Apr 11, 2026' },
-
-  // Technical/Upgrade track
-  { a:'area-tech', start:'2026-03-10', label:'MAP Update  Mar 10',         dotCls:'d-sup', row:1, tip:'MAP Update\nTue Mar 10, 0700 hrs' },
-  { a:'area-tech', start:'2026-04-01', label:'Training Update  Apr 1',     dotCls:'d-sup', row:2, tip:'Training Envs Update (conventional)\nWed Apr 1 0700 hrs\nREF, PREP, PLY, ACE 1–4' },
-  { a:'area-tech', start:'2026-04-09', label:'PSUP2M Update  Apr 9',       dotCls:'d-sup', row:1, tip:'PSUP2M Update\nThu Apr 9 0700 hrs' },
-  { a:'area-tech', start:'2026-04-10', label:'PSUPLB Refresh  Apr 10',     dotCls:'d-sup', row:2, tip:'PSUPLB Refresh\nFri Apr 10 0700 hrs' },
-  { a:'area-tech', start:'2026-04-11', label:'PSUP2M & PSUP Refresh',      dotCls:'d-sup', row:1, tip:'PSUP2M Refresh ~0345 hrs (2 hr)\nPSUP Update & Refresh ~0345 hrs (6 hr)' },
-  { a:'area-tech', start:'2026-04-15', label:'Critical Fix AdHoc SU  Apr 15', dotCls:'d-tech', row:0, tip:'Critical Fix AdHoc only SU Install Window\nWed Apr 15 0200 hrs' },
-
-  // Training (merged into tech)
-  { a:'area-tech', start:'2026-02-19', label:'Training Update  Feb 19',    dotCls:'d-sup', row:2, tip:'Training Envs Update (conventional)\nThu Feb 19 0700 hrs\nMST, EUPLY, ACE 5 — incl. Fix SU Pkg' },
-
-  // Current Version
-  { a:'area-current', start:'2026-01-14', label:'Monthly Build/SU  Jan 14',    dotCls:'d-cur', row:0, tip:'Monthly Epic Build/SU\nWed Jan 14 0200 hrs' },
-  { a:'area-current', start:'2026-01-16', label:'Conventional Install  Jan 16', dotCls:'d-cur', row:0, tip:'Conventional install: TST, MST, PSUPLB\nThu Jan 16 0700 hrs' },
-  { a:'area-current', start:'2026-01-20', label:'Receive Feb SU Pkg',          dotCls:'d-cur', row:0, tip:'Receive Feb SU Package\nJan 20' },
-  { a:'area-current', start:'2026-01-21', label:'DR Failover  Jan 21',         dotCls:'d-cur', row:0, tip:'DR Failover\nJan 21' },
-  { a:'area-current', start:'2026-02-04', label:'DR Failback  Feb 4',          dotCls:'d-cur', row:0, tip:'DR Failback\nFeb 4' },
-  { a:'area-current', start:'2026-02-11', label:'Monthly Build/SU  Feb 11',    dotCls:'d-cur', row:0, tip:'Monthly Epic Build/SU\nWed Feb 11 0200 hrs' },
+const TECH_BARS = [
+  { start:'2025-11-24', end:'2026-01-04', label:'PSUPLB Refresh & Upgrade',                  cls:'c-tech' },
+  { start:'2026-01-06', end:'2026-01-08', label:'REL Transparent Refresh  Jan 6–8',           cls:'c-tech-e',
+    tipText:'REL Refresh and Update (Transparent)\nJan 6 0800 hrs – Jan 8 EOD' },
+  { start:'2026-01-09', end:'2026-01-12', label:'POC Update (Conv.)  Jan 9–12',               cls:'c-tech-e',
+    tipText:'POC Update (conventional)\nFri Jan 9 0800 hrs – Mon Jan 12 EOD' },
+  { start:'2026-01-26', end:'2026-01-27', label:'TST Update & CVTST  Jan 26–27',              cls:'c-tech-e',
+    tipText:'TST Update (conventional) & CVTST Environment inserted\nMon Jan 26 @0500 – Tue Jan 27' },
+  { start:'2026-02-17', end:'2026-02-18', label:'Fix SU Pkg → REL, POC, TST, PSUPLB',        cls:'c-tech-f',
+    tipText:'Fix SU Package\nTransparent REL: Tue Feb 17 1200 hrs\nApply REL, POC, TST, PSUPLB: Wed Feb 18 0700 hrs' },
+  { start:'2026-02-27', end:'2026-03-05', label:'REL offline → Dress Rehearsal  Mar 5',       cls:'c-tech',
+    tipText:'REL offline beginning: Fri Feb 27 0700 hrs\nDress Rehearsal: Thu Mar 5 1300 hrs (REL)' },
+  { start:'2026-03-13', end:'2026-03-19', label:'REL offline → Dress Rehearsal  Mar 19',      cls:'c-tech',
+    tipText:'REL offline beginning: Fri Mar 13 0700 hrs\nDress Rehearsal: Thu Mar 19 1300 hrs (REL)' },
+  { start:'2026-03-24', end:'2026-03-25', label:'Critical Fix SU  Mar 24–25',                 cls:'c-tech-f',
+    tipText:'Critical Fix SU Package\nTransparent REL: Tue Mar 24 1200 hrs\nInstall POC, TST, MAP, PSUPLB, TRAINING: Wed Mar 25 0700 hrs' },
+  { start:'2026-04-02', end:'2026-04-07', label:'REL offline → Final DR + GO/No-GO  Apr 7',  cls:'c-tech',
+    tipText:'REL offline beginning: Thu Apr 2 0700 hrs\nFinal Dress Rehearsal: Tue Apr 7 1300 hrs\nGO/No-GO Decision: Tue Apr 7 1600 hrs' },
+  { start:'2026-04-08', end:'2026-04-11', label:'Transparent Apr 8  →  Prod Update Apr 11',  cls:'c-tech-f',
+    tipText:'Start Transparent: Wed Apr 8 1700 hrs\nProduction Update: Sat Apr 11 0200 hrs' },
 ];
+const TECH_DOTS = [
+  { start:'2026-02-19', label:'Training Update  Feb 19',    dotCls:'d-sup', tipText:'Training Envs Update (conventional)\nThu Feb 19 0700 hrs\nMST, EUPLY, ACE 5 — incl. Fix SU Pkg' },
+  { start:'2026-03-10', label:'MAP Update  Mar 10',         dotCls:'d-sup', tipText:'MAP Update\nTue Mar 10 0700 hrs' },
+  { start:'2026-04-01', label:'Training Update  Apr 1',     dotCls:'d-sup', tipText:'Training Envs Update (conventional)\nWed Apr 1 0700 hrs\nREF, PREP, PLY, ACE 1–4' },
+  { start:'2026-04-09', label:'PSUP2M Update  Apr 9',       dotCls:'d-sup', tipText:'PSUP2M Update\nThu Apr 9 0700 hrs' },
+  { start:'2026-04-10', label:'PSUPLB Refresh  Apr 10',     dotCls:'d-sup', tipText:'PSUPLB Refresh\nFri Apr 10 0700 hrs' },
+  { start:'2026-04-11', label:'PSUP2M & PSUP Refresh',      dotCls:'d-sup', tipText:'PSUP2M Refresh ~0345 hrs (2 hr duration)\nPSUP Update & Refresh ~0345 hrs (6 hr duration)' },
+  { start:'2026-04-15', label:'Critical Fix AdHoc SU',      dotCls:'d-tech', tipText:'Critical Fix AdHoc only SU Install Window\nWed Apr 15 0200 hrs' },
+];
+
+const CUR_BARS = [
+  { start:'2026-03-02', end:'2026-03-08', label:'No Prod SU Pkg for March', cls:'c-cur-no',
+    tipText:'No Production SU Package for March' },
+];
+const CUR_DOTS = [
+  { start:'2026-01-14', label:'Monthly Build/SU  Jan 14',     dotCls:'d-cur', tipText:'Monthly Epic Build/SU\nWed Jan 14 0200 hrs' },
+  { start:'2026-01-16', label:'Conventional Install  Jan 16', dotCls:'d-cur', tipText:'Conventional install: TST, MST, PSUPLB\nThu Jan 16 0700 hrs' },
+  { start:'2026-01-20', label:'Receive Feb SU Pkg',           dotCls:'d-cur', tipText:'Receive Feb SU Package\nJan 20' },
+  { start:'2026-01-21', label:'DR Failover  Jan 21',          dotCls:'d-cur', tipText:'DR Failover\nJan 21' },
+  { start:'2026-02-04', label:'DR Failback  Feb 4',           dotCls:'d-cur', tipText:'DR Failback\nFeb 4' },
+  { start:'2026-02-11', label:'Monthly Build/SU  Feb 11',     dotCls:'d-cur', tipText:'Monthly Epic Build/SU\nWed Feb 11 0200 hrs' },
+];
+
+// ── Prepare RA pins ───────────────────────────────────────────────────────────
+function makeRAPins(ras) {
+  return ras
+    .map(ra => ({ ra, prd: parsePrd(ra.title) }))
+    .filter(p => p.prd);
+}
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 function init() {
-  setAreaW();
-  buildMonths();
-  buildWeeks();
-  addVLines();
+  setWidths();
+  buildHeader();
+  buildGrid();
   buildMarkers();
 
-  BARS.forEach(ev  => addBar(ev.a, ev));
-  DOTS.forEach(ev  => addDot(ev.a, ev));
+  const suCur = makeRAPins(RA_DATA.filter(r => r.type === 'Special Update' && !r.upgrade_ver));
+  const suUpg = makeRAPins(RA_DATA.filter(r => r.type === 'Special Update' &&  r.upgrade_ver));
 
-  // Key milestone diamond on app track
-  addKeyMark('area-app', '2026-04-11', 'UPGRADE', '#1d4ed8', BAR_TOP);
+  buildTrack('row-app',     'area-app',     APP_BARS, APP_DOTS, null);
+  buildTrack('row-tech',    'area-tech',    TECH_BARS, TECH_DOTS, suUpg);
+  buildTrack('row-current', 'area-current', CUR_BARS, CUR_DOTS,  suCur);
 
-  // ── RA pins: group by PRD date to offset overlapping ──
-  const suCurrent = RA_DATA.filter(r => r.type === 'Special Update' && !r.upgrade_ver);
-  const suUpgrade = RA_DATA.filter(r => r.type === 'Special Update' &&  r.upgrade_ver);
-
-  // Group by PRD date for x-offsetting
-  function groupByDate(ras) {
-    const groups = {};
-    ras.forEach(ra => {
-      const prd = parsePrd(ra.title);
-      if (!prd) return;
-      if (!groups[prd]) groups[prd] = [];
-      groups[prd].push(ra);
-    });
-    return groups;
-  }
-
-  const curGroups = groupByDate(suCurrent);
-  Object.values(curGroups).forEach(group => {
-    group.forEach((ra, i) => {
-      const prd = parsePrd(ra.title);
-      addRAPin('area-current', ra, prd, RA_Y_CURRENT, i * 52);
-    });
+  // Scroll sync
+  const scEl = document.getElementById('tl-scroll');
+  const mi   = document.getElementById('months-inner');
+  const wi   = document.getElementById('weeks-inner');
+  scEl.addEventListener('scroll', () => {
+    mi.style.transform = `translateX(-${scEl.scrollLeft}px)`;
+    wi.style.transform = `translateX(-${scEl.scrollLeft}px)`;
   });
 
-  const upgGroups = groupByDate(suUpgrade);
-  Object.values(upgGroups).forEach(group => {
-    group.forEach((ra, i) => {
-      const prd = parsePrd(ra.title);
-      addRAPin('area-tech', ra, prd, RA_Y_TECH, i * 52);
-    });
-  });
-
-  // ── Scroll sync for sticky header ──────────────────────────────────────────
-  const scrollEl    = document.getElementById('tl-scroll');
-  const monthsInner = document.getElementById('months-inner');
-  const weeksInner  = document.getElementById('weeks-inner');
-  scrollEl.addEventListener('scroll', () => {
-    const sl = scrollEl.scrollLeft;
-    monthsInner.style.transform = `translateX(-${sl}px)`;
-    weeksInner.style.transform  = `translateX(-${sl}px)`;
-  });
-
-  // Scroll to ~today on load (minus a bit of left margin)
-  const todayX = Math.max(0, dateX(TODAY_STR) - 120);
-  scrollEl.scrollLeft = todayX;
+  // Scroll to today
+  scEl.scrollLeft = Math.max(0, dx(TODAY_STR) - 130);
 }
 
 init();
