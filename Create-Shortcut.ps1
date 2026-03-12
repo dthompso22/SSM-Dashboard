@@ -2,7 +2,7 @@
 # Run this once to create a desktop shortcut for the RA Dashboard.
 # After it's on your desktop, right-click it -> "Pin to taskbar" for one-click launch.
 
-$ShortcutPath = "$env:USERPROFILE\Desktop\RA Dashboard.lnk"
+$ShortcutPath = [Environment]::GetFolderPath('Desktop') + "\RA Dashboard.lnk"
 $WshShell     = New-Object -ComObject WScript.Shell
 $Shortcut     = $WshShell.CreateShortcut($ShortcutPath)
 
