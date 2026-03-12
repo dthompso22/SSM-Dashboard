@@ -1,8 +1,11 @@
-# Per-machine user notes (not shared)
-ra_notes.json
-
 # Python cache
 __pycache__/
 *.pyc
 *.pyo
+
+# Secrets
 .env
+.deploy-secret
+
+# Static build output (deploy separately via /deploy)
+dist/

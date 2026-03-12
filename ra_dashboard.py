@@ -3,6 +3,7 @@ import json
 import os
 import re
 import subprocess
+import threading
 from datetime import datetime, date
 
 app = Flask(__name__)
@@ -16,6 +17,37 @@ NOTES_FILE        = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra
 RA_DATA_FILE      = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_data.json")
 CALENDAR_TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendar_template.html")
 UPDATE_SCRIPT     = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Update-RAData.ps1")
+
+# ── Git sync ───────────────────────────────────────────────────────────────────
+def git_pull():
+    subprocess.run(
+        ["git", "-C", BASE, "pull", "--rebase"],
+        capture_output=True
+    )
+
+def git_push(filepath, message):
+    """Stage one file, commit, pull --rebase, push. Silent no-op if nothing changed."""
+    rel = os.path.relpath(filepath, BASE)
+    subprocess.run(["git", "-C", BASE, "add", rel], capture_output=True)
+    commit = subprocess.run(
+        ["git", "-C", BASE, "commit", "-m", message],
+        capture_output=True, text=True
+    )
+    if commit.returncode != 0:
+        return  # nothing to commit
+    pull = subprocess.run(
+        ["git", "-C", BASE, "pull", "--rebase"],
+        capture_output=True, text=True
+    )
+    if pull.returncode != 0:
+        subprocess.run(["git", "-C", BASE, "rebase", "--abort"], capture_output=True)
+        return
+    subprocess.run(["git", "-C", BASE, "push"], capture_output=True)
+
+def push_async(filepath, message):
+    threading.Thread(target=git_push, args=(filepath, message), daemon=True).start()
+
+BASE = os.path.dirname(os.path.abspath(__file__))
 
 def load_ra_data():
     with open(RA_DATA_FILE, "r", encoding="utf-8") as f:
@@ -65,13 +97,13 @@ def api_get_notes():
 @app.route("/api/refresh", methods=["POST"])
 def api_refresh():
     try:
+        git_pull()  # pick up any changes from the other person first
         result = subprocess.run(
             ["powershell", "-ExecutionPolicy", "Bypass", "-File", UPDATE_SCRIPT],
             capture_output=True, text=True, timeout=120
         )
         if result.returncode != 0:
             return jsonify({"status": "error", "message": result.stderr or result.stdout}), 500
-        # Count RAs written from output
         count = None
         for line in result.stdout.splitlines():
             if "RAs written" in line:
@@ -79,6 +111,7 @@ def api_refresh():
                 m = _re.search(r'(\d+) RAs written', line)
                 if m:
                     count = int(m.group(1))
+        git_push(RA_DATA_FILE, "Refresh RA data from Track")
         return jsonify({"status": "ok", "count": count, "output": result.stdout})
     except subprocess.TimeoutExpired:
         return jsonify({"status": "error", "message": "Script timed out after 120s"}), 500
@@ -95,6 +128,7 @@ def api_save_notes(pkg_id):
     notes[key].update(payload)
     notes[key]["last_updated"] = datetime.now().isoformat(timespec="seconds")
     save_notes(notes)
+    push_async(NOTES_FILE, f"Update notes for RA {pkg_id}")
     return jsonify({"status": "ok", "last_updated": notes[key]["last_updated"]})
 
 HTML_TEMPLATE = r"""<!DOCTYPE html>
