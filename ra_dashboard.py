@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 import json
 import os
 import re
+import subprocess
 from datetime import datetime, date
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ UPGRADE_PRD_DISP = "April 11, 2026"
 NOTES_FILE        = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_notes.json")
 RA_DATA_FILE      = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ra_data.json")
 CALENDAR_TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendar_template.html")
+UPDATE_SCRIPT     = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Update-RAData.ps1")
 
 def load_ra_data():
     with open(RA_DATA_FILE, "r", encoding="utf-8") as f:
@@ -59,6 +61,29 @@ def save_notes(data):
 @app.route("/api/notes", methods=["GET"])
 def api_get_notes():
     return jsonify(load_notes())
+
+@app.route("/api/refresh", methods=["POST"])
+def api_refresh():
+    try:
+        result = subprocess.run(
+            ["powershell", "-ExecutionPolicy", "Bypass", "-File", UPDATE_SCRIPT],
+            capture_output=True, text=True, timeout=120
+        )
+        if result.returncode != 0:
+            return jsonify({"status": "error", "message": result.stderr or result.stdout}), 500
+        # Count RAs written from output
+        count = None
+        for line in result.stdout.splitlines():
+            if "RAs written" in line:
+                import re as _re
+                m = _re.search(r'(\d+) RAs written', line)
+                if m:
+                    count = int(m.group(1))
+        return jsonify({"status": "ok", "count": count, "output": result.stdout})
+    except subprocess.TimeoutExpired:
+        return jsonify({"status": "error", "message": "Script timed out after 120s"}), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route("/api/notes/<int:pkg_id>", methods=["POST"])
 def api_save_notes(pkg_id):
@@ -120,6 +145,25 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   .nav-link:hover { background: rgba(255,255,255,.1); color: #fff; }
   .nav-link.active { background: rgba(255,255,255,.15); color: #fff; }
+
+  /* ── Refresh button ── */
+  #refresh-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: #e8501a; border: none; border-radius: 5px;
+    color: #fff; font-size: 12px; font-weight: 600;
+    padding: 5px 12px; cursor: pointer;
+    transition: background .15s, opacity .15s;
+  }
+  #refresh-btn:hover:not(:disabled) { background: #c94315; }
+  #refresh-btn:disabled { opacity: .6; cursor: default; }
+  #refresh-btn .spin {
+    display: none; width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  #refresh-btn.loading .spin { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ── Layout ── */
   main { max-width: 1400px; margin: 0 auto; padding: 20px 20px 60px; display: flex; flex-direction: column; gap: 24px; }
@@ -332,9 +376,13 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       <div class="subtitle">Technical Coordinator &mdash; Request Activity Dashboard</div>
     </div>
   </div>
-  <div style="display:flex;gap:4px;">
+  <div style="display:flex;align-items:center;gap:8px;">
     <a class="nav-link active" href="/">RA Tracker</a>
     <a class="nav-link" href="/calendar">Calendar</a>
+    <button id="refresh-btn" onclick="refreshData()">
+      <span class="spin"></span>
+      <span id="refresh-label">&#8635; Refresh Data</span>
+    </button>
   </div>
   <div class="meta">
     <div id="header-counts"></div>
@@ -682,6 +730,36 @@ function flashSaved(key) {
     el.classList.add('show');
     setTimeout(() => el.classList.remove('show'), 2000);
   });
+}
+
+// ── Refresh ───────────────────────────────────────────────────────────────────
+async function refreshData() {
+  const btn   = document.getElementById('refresh-btn');
+  const label = document.getElementById('refresh-label');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  label.textContent = 'Refreshing\u2026';
+  try {
+    const resp = await fetch('/api/refresh', { method: 'POST' });
+    const data = await resp.json();
+    if (!resp.ok) {
+      label.textContent = '\u26A0 Error';
+      btn.classList.remove('loading');
+      console.error('Refresh error:', data.message);
+      alert('Refresh failed:\n' + data.message);
+      btn.disabled = false;
+      label.textContent = '\u21BB Refresh Data';
+      return;
+    }
+    label.textContent = data.count != null ? `\u2713 ${data.count} RAs` : '\u2713 Done';
+    btn.classList.remove('loading');
+    setTimeout(() => location.reload(), 800);
+  } catch (err) {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    label.textContent = '\u21BB Refresh Data';
+    console.error('Refresh fetch error:', err);
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
