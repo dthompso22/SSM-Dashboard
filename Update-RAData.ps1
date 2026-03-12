@@ -29,6 +29,7 @@ SELECT
     xpg.RA_NUM,
     xpg.TITLE,
     xpg.CREATION_DATE,
+    xpg.REQUIRE_W_UPGRD_YN,
     ISNULL(pt.NAME, 'Other') AS PACKAGE_TYPE,
     (
         SELECT TOP 1 e.USER_NAME
@@ -53,16 +54,18 @@ ORDER BY xpg.CREATION_DATE DESC
 $ras = [ordered]@{}
 $r = $cmd.ExecuteReader()
 while ($r.Read()) {
-    $pkgId = [string]$r['PACKAGE_ID']
+    $pkgId       = [string]$r['PACKAGE_ID']
+    $reqUpgrd    = if ($r['REQUIRE_W_UPGRD_YN'] -is [DBNull]) { "" } else { [string]$r['REQUIRE_W_UPGRD_YN'] }
+    $pkgType     = [string]$r['PACKAGE_TYPE']
     $ras[$pkgId] = [ordered]@{
         pkg_id        = [int]$r['PACKAGE_ID']
         ra_num        = [int]$r['RA_NUM']
         title         = [string]$r['TITLE']
         created       = ([datetime]$r['CREATION_DATE']).ToString("yyyy-MM-dd")
-        type          = [string]$r['PACKAGE_TYPE']
+        type          = $pkgType
         primary_owner = if ($r['PRIMARY_OWNER'] -is [DBNull]) { "" } else { [string]$r['PRIMARY_OWNER'] }
         envs          = [ordered]@{}
-        upgrade_ver   = $false
+        upgrade_ver   = ($reqUpgrd -eq 'Y' -and $pkgType -eq 'Special Update')
     }
 }
 $r.Close()
@@ -81,18 +84,19 @@ $pkgIdList = ($ras.Keys) -join ","
 $cmd.CommandText = "
 SELECT
     era.PACKAGE_ID,
-    env.SHORT_NAME,
-    era.INSTALL_STATUS_C,
+    v.ENVIRONMENT_NAME,
+    slg.RA_ENV_TYPE_C,
+    era.XPG_INSTALL_STATUS_C,
     era.INSTALL_DATE,
-    era.APPLICABLE_YN,
-    era.REQUIRE_W_UPGRD_YN
+    era.RA_ENV_APPLICABLE
 FROM XPG_ENV_RA_AND_REL era
-JOIN SLG_RA_ENVIRONMENT env ON env.ENV_ID = era.ENV_ID
+JOIN SLG_RA_ENVIRONMENT slg ON slg.RA_ENVIRONMENT_ID = era.CUSTOMER_ENV_ID
+JOIN v_SLG_Environments v ON v.LINE = slg.LINE AND v.CUSTOMER_NUMBER = slg.CUSTOMER_NUMBER
 WHERE era.PACKAGE_ID IN ($pkgIdList)
-  AND env.CUSTOMER_ID = '618'
-  AND era.APPLICABLE_YN = 'Y'
-  AND env.SHORT_NAME != 'PRD'
-ORDER BY era.PACKAGE_ID, env.SHORT_NAME
+  AND slg.CUSTOMER_NUMBER = '618'
+  AND era.RA_ENV_APPLICABLE = 1
+  AND slg.RA_ENV_TYPE_C NOT IN (11, 80, 99)
+ORDER BY era.PACKAGE_ID, v.ENVIRONMENT_NAME
 "
 
 $r = $cmd.ExecuteReader()
@@ -100,21 +104,16 @@ while ($r.Read()) {
     $pkgId = [string]$r['PACKAGE_ID']
     if (-not $ras.Contains($pkgId)) { continue }
 
-    $shortName    = [string]$r['SHORT_NAME']
-    $statusC      = if ($r['INSTALL_STATUS_C'] -is [DBNull]) { -1 } else { [int]$r['INSTALL_STATUS_C'] }
-    $installDate  = $r['INSTALL_DATE']
-    $requireUpgrd = [string]$r['REQUIRE_W_UPGRD_YN']
+    # Strip 'SSM ' prefix for a compact display name (e.g. 'SSM REL' -> 'REL')
+    $envName     = ([string]$r['ENVIRONMENT_NAME']) -replace '^SSM\s+', ''
+    $statusC     = if ($r['XPG_INSTALL_STATUS_C'] -is [DBNull]) { -1 } else { [int]$r['XPG_INSTALL_STATUS_C'] }
+    $installDate = $r['INSTALL_DATE']
 
     # Install status: 3 = Completed, non-null install date = done, 2 = Pending
     if ($statusC -eq 3 -or (-not ($installDate -is [DBNull]))) {
-        $ras[$pkgId].envs[$shortName] = "done"
+        $ras[$pkgId].envs[$envName] = "done"
     } elseif ($statusC -eq 2) {
-        $ras[$pkgId].envs[$shortName] = "pending"
-    }
-
-    # Flag upgrade-required SUs (goes to PRD with upgrade, not standalone)
-    if ($requireUpgrd -eq 'Y' -and $ras[$pkgId].type -eq 'Special Update') {
-        $ras[$pkgId].upgrade_ver = $true
+        $ras[$pkgId].envs[$envName] = "pending"
     }
 }
 $r.Close()
@@ -147,7 +146,9 @@ foreach ($ra in $ras.Values) {
     }
 }
 
-$output | ConvertTo-Json -Depth 5 | Set-Content -Path $OutputFile -Encoding UTF8
+# Write without BOM so Python's json.load() can read it
+$json = $output | ConvertTo-Json -Depth 5
+[System.IO.File]::WriteAllText($OutputFile, $json, [System.Text.UTF8Encoding]::new($false))
 
 Write-Host ""
 Write-Host "  ========================================" -ForegroundColor Cyan
