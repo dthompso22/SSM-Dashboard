@@ -6,11 +6,10 @@ $ShortcutPath = [Environment]::GetFolderPath('Desktop') + "\RA Dashboard.lnk"
 $WshShell     = New-Object -ComObject WScript.Shell
 $Shortcut     = $WshShell.CreateShortcut($ShortcutPath)
 
-$Shortcut.TargetPath       = "powershell.exe"
-$Shortcut.Arguments        = "-ExecutionPolicy Bypass -WindowStyle Normal -File `"$PSScriptRoot\Start-Dashboard.ps1`""
+$Shortcut.TargetPath       = "$PSScriptRoot\Launch.bat"
 $Shortcut.WorkingDirectory = $PSScriptRoot
 $Shortcut.Description      = "Launch RA Dashboard"
-$Shortcut.IconLocation     = "shell32.dll,14"  # globe/web icon
+$Shortcut.IconLocation     = "shell32.dll,14"
 
 $Shortcut.Save()
 
